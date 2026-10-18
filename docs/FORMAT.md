@@ -131,6 +131,16 @@ tiles from the water), which makes the smooth sand beach.
   `declare_war`, `popup_dialog`, `victory`, `defeat`. String inequality is written `!(a == b)`.
 - See `generator/tools/scriptgen.py` for a complete working script with nearest-place naming and rename-on-capture.
 
+## Steam Workshop mods
+- A mod is a folder under the game's `mods\` directory that mirrors the game's own layout, e.g.
+  `mods\GrecoTurkishWar\scenario\Custom\<name>\<name>.scx/.sce/.bhs`, plus an optional `preview.jpg`.
+- **Tools & Extras → Steam Workshop** (the Mod Manager) lists it as `<LOCAL>`. **Publish Mod** uploads it. The title is the
+  folder name, and the description is limited to about 255 characters. The game then writes `_publishinfo.txt` into the mod
+  folder and `mods\mod-status.txt` with the Workshop ID.
+- Scenarios from mods appear in the setup screens' Scenario list as `custom\<name>\<name>`.
+- Multiplayer only accepts published scenarios ("You must publish your scenario before you can play it in a multiplayer
+  game"), with at least 2 human slots in the file. Joining players are offered the mod download.
+
 ## Debugging crashes
 Windows Error Reporting keeps the crash dumps. `rise.pdb` ships in the game's `sbl\` folder, and dbghelp symbolises
 the faulting address against it (`generator/tools/sym.py <rva>`). That is how each crash above was traced to its

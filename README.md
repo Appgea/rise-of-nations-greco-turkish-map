@@ -9,6 +9,9 @@ A two-player map, Greeks vs Turks, built from real geodata. It covers:
 
 Every city you found takes the name of the nearest real place, in your own language.
 
+**Steam Workshop:** [GrecoTurkishWar](https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863). Subscribe and the
+game installs it for you; it's also what makes online multiplayer work.
+
 ![Map overview](docs/images/overview.png)
 
 ## Features
@@ -68,31 +71,39 @@ The leaders are Eleftherios Venizelos (Greeks, slot 1) and Mustafa Kemal Atatür
 plays on Moderate; change `AI_DIFFICULTY` in `generator/tools/build.py` and rebuild for another level.
 
 ## Install
-1. Download `GrecoTurkish-v1.1.zip` from [Releases](../../releases), or use the `scenarios/` folder of this repo.
-2. Find the game folder: Steam → Rise of Nations → ⚙ → Manage → **Browse local files**.
-3. Extract the zip so that you get:
-   ```
-   Rise of Nations\scenario\Custom\GrecoTurkish_Frontier\GrecoTurkish_Frontier.scx (+ .sce, .bhs)
-   Rise of Nations\scenario\Custom\GrecoTurkish_Capitals\...
-   Rise of Nations\scenario\Custom\GrecoTurkish_Frontier_vsAI\...
-   Rise of Nations\scenario\Custom\GrecoTurkish_Capitals_vsAI\...
-   ```
+**Recommended: Steam Workshop.** Subscribe to [GrecoTurkishWar](https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863)
+and restart the game. Steam keeps it up to date, and online games need the Workshop version.
+
+**Manual (solo only):** download `GrecoTurkish-v1.1.zip` from [Releases](../../releases) and extract it into the game's
+`scenario\Custom\` folder (Steam → Rise of Nations → ⚙ → Manage → **Browse local files**).
 
 ## Play against the computer
-Go to **Solo Game → Load a Scenario**, open `GrecoTurkish_Frontier_vsAI` (or `_Capitals_vsAI`) and press Load.
+1. **Solo Game → Quick Battle.** This opens the setup screen.
+2. Set **Game Rules: Scenario**, then pick `custom\grecoturkish_frontier\...` (or `..._capitals`) under **Scenario**.
+3. Slot 1 is you, as the Greeks. Set slot 2 (the Turks) to **Computer**, **Computer/Rush** or **Computer/Boom**,
+   and pick the difficulty.
+4. Press **Start**.
 
-## Play with a friend
-You play online through Steam; you don't need to be on the same network.
-1. Both players install the scenarios. The files must be identical on both PCs.
-2. Both players update the game in Steam, so you run the same version.
-3. The host goes to **Multiplayer → Online → create a game → Game Rules: Scenario**, then picks
-   `GrecoTurkish_Frontier` or `GrecoTurkish_Capitals`.
-4. The friend joins from the lobby browser, or the host invites them through Steam (Shift+Tab → friend → Invite to game).
-   Slot 1 is the Greeks, slot 2 is the Turks.
-5. Start the game. Within about 2 seconds the capitals get their real names.
+![Setup screen](docs/images/setup_screen.jpg)
 
-The multiplayer scenarios have both slots set to Human, because the game refuses multiplayer scenarios with fewer
-than 2 humans. If you load one in Solo, you control both nations.
+Nations and teams are locked by the scenario. The `_vsAI` scenarios start straight against a Moderate computer if you
+use **Solo Game → Load a Scenario** instead (manual install only).
+
+## Play with a friend online
+This runs on the game's own online lobby through Steam. You don't need Hamachi or a shared network.
+1. Both players subscribe to the [Workshop item](https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863)
+   and update the game.
+2. The host goes to **Multiplayer Game → Game Browser → Create**. Set Max Players 2 and Visibility **Private**.
+3. In the lobby, set **Game Rules: Scenario**, then pick `custom\grecoturkish_frontier\grecoturkish_frontier`
+   (or `..._capitals`).
+4. Press **Invite Friend** and invite your friend through Steam. They take slot 2, the Turks.
+5. Press **Start**. Within about 2 seconds the capitals get their real names.
+
+![Online lobby](docs/images/online_lobby.jpg)
+
+Online play needs the Workshop version: the game refuses unpublished scenarios in multiplayer ("You must publish your
+scenario before you can play it in a multiplayer game"). It also needs both slots set to Human in the file, which the
+multiplayer scenarios are.
 
 ## Rebuild or tweak the map
 The `generator/` folder holds the full pipeline. It needs Python 3 (tested with 3.14) on Windows with the game
@@ -106,6 +117,7 @@ pip install -r requirements.txt
 python fetch_data.py            :: ~30 MB of open geodata into generator\data (follows the map extent)
 python tools\build.py           :: writes the 4 scenarios to generator\out\
 python tools\build.py --install :: ...and copies them into the game's scenario\Custom folder
+python tools\build.py --mod     :: ...or into mods\GrecoTurkishWar, then re-publish from the in-game Mod Manager
 ```
 If Steam put the game somewhere else, set `RON_DIR` first, e.g. `set RON_DIR=D:\SteamLibrary\steamapps\common\Rise of Nations`.
 
@@ -151,7 +163,9 @@ The format notes, including the engine limits that crash the game if you get the
   - both scenarios load and play in solo;
   - Frontier vs AI loads and plays against the computer;
   - the capitals spawn, get their real names and have wood, metal and farm room.
-- Not yet tested: a real two-PC multiplayer game, renaming on capture, and the end-of-game check. Please open an issue
+  - published to the Steam Workshop; the setup screen starts it against the computer; a private online lobby accepts
+    it with Game Rules: Scenario.
+- Not yet tested: a full two-PC online game, renaming on capture, and the end-of-game check. Please open an issue
   if something breaks.
 
 ## Credits

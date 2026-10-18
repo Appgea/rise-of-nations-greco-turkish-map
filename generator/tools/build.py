@@ -308,6 +308,8 @@ def main():
     ap.add_argument('--W', type=int, default=512)
     ap.add_argument('--out', default=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'out'))
     ap.add_argument('--install', action='store_true')
+    ap.add_argument('--mod', action='store_true', help='also copy into mods/GrecoTurkishWar (the Steam Workshop mod; '
+                    're-publish it from Tools & Extras > Steam Workshop)')
     ap.add_argument('--rect', action='store_true', help='rectangular map (crashes RoN EE 1.20 in TileSet code)')
     a = ap.parse_args()
     W = a.W; H = round(W / geo.aspect() / 4) * 4
@@ -374,6 +376,13 @@ def main():
             for ext in ('.scx', '.sce', '.bhs'):
                 shutil.copyfile(os.path.join(d, name + ext), os.path.join(dst, name + ext))
             print('installed', dst)
+    if a.mod:
+        for name, d in made:
+            dst = os.path.join(GAME, 'mods', 'GrecoTurkishWar', 'scenario', 'Custom', name)
+            os.makedirs(dst, exist_ok=True)
+            for ext in ('.scx', '.sce', '.bhs'):
+                shutil.copyfile(os.path.join(d, name + ext), os.path.join(dst, name + ext))
+            print('mod', dst)
 
 if __name__ == '__main__':
     main()
