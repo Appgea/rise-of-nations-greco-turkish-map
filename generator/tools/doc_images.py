@@ -140,11 +140,11 @@ def main():
         if 0 <= x < W and 0 <= y < H:
             slots.append((int(round(x)), int(round(y)), gr, tr, 9 if tr in cities.MAJOR else 0))
     starts = {}
-    for variant, st in cities.STARTS.items():
+    for variant in ('frontier', 'capitals'):
         pts = []
-        for side in ('greeks', 'turks'):
-            s = next(s for s in slots if s[3] == st[side])
-            x, y = build.good_start(P, s[0], s[1] + yo); pts.append((x, y - yo))
+        for c, _, _ in cities.STARTS[variant]:
+            cy, cx = T['kits'][c]
+            x, y = build.good_start(P, cx * 4 + 2, cy * 4 + 2 + yo); pts.append((x, y - yo))
         starts[variant] = pts
     overview(T, res, ruins, starts).save(os.path.join(OUT, 'overview.png'), optimize=True)
     city_names(T, slots).save(os.path.join(OUT, 'city_names.png'), optimize=True)

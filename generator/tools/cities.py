@@ -404,10 +404,14 @@ MAJOR = {'Bükres', 'Belgrad', 'Köstence', 'Rusçuk', 'Akmescit', 'Atina', 'Sel
          'Sivas', 'Eskisehir', 'Izmit', 'Çanakkale', 'Denizli', 'Lefkosa', 'Sofya', 'Filibe', 'Üsküp', 'Manastir',
          'Tiran', 'Draç', 'Nis', 'Pristine', 'Halep', 'Musul', 'Tiflis', 'Varna', 'Burgaz'}
 
-# starting capitals (index into CITIES by Turkish-side name)
+# scenarios: one entry per player slot = (start city by Turkish-side name, default nation, default team).
+# Nations, teams and computer players can all be changed on the setup screen.
 STARTS = {
-    'capitals': {'greeks': 'Atina', 'turks': 'Ankara'},
-    'frontier': {'greeks': 'Selanik', 'turks': 'Bursa'},
+    'frontier': [('Selanik', 'greeks', 1), ('Bursa', 'turks', 2)],
+    'capitals': [('Atina', 'greeks', 1), ('Ankara', 'turks', 2)],
+    '4p': [('Selanik', 'greeks', 1), ('Bursa', 'turks', 2), ('Atina', 'greeks', 1), ('Ankara', 'turks', 2)],
+    '6p': [('Selanik', 'greeks', 1), ('Bursa', 'turks', 2), ('Atina', 'greeks', 1), ('Ankara', 'turks', 2),
+           ('Sofya', 'greeks', 1), ('Konya', 'turks', 2)],
 }
 
 def check():

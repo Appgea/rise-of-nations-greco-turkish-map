@@ -1,6 +1,7 @@
-// Greco-Turkish War - Capitals
+// Greco-Turkish War - 6 players
 // Generated map script: starting cities, and every city takes the name of the nearest real place.
-// Greek player (1) gets Greek names, Turkish player (2) gets Turkish names; captured cities are renamed.
+// Turks get Turkish names, every other nation Greek-side names; captured cities are renamed by the new owner.
+// Save games: run_once does not run again on load, and the start setup is also guarded by setup_done.
 
 scenario
 {
@@ -160,12 +161,15 @@ static int slot_pull[] = [81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     81, 0, 0];
 
-static int kmax = 128;
+static int kmax = 160;
 static String k_name[] = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
 static int k_owner[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -180,13 +184,19 @@ static int k_slot[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+static int npl = 6;
+static int start_x[] = [0, 134, 330, 154, 450, 142, 438];
+static int start_y[] = [0, 250, 270, 354, 282, 158, 366];
+static int cap_slot[] = [-1, 34, 183, 0, 220, 115, 222];
+static int cap_done[] = [0, 0, 0, 0, 0, 0, 0];
 static int setup_done = 0;
-static int cap_slot[] = [-1, 0, 220];
-static int cap_done[] = [0, 0, 0];
 
 int p;
+int q;
 int c;
 int n;
 int i;
@@ -203,58 +213,49 @@ int found;
 int freeslot;
 int wx;
 int off;
-int x1;
-int y1;
-int x2;
-int y2;
+int x;
+int y;
+int alive;
+int enemies;
 String cname;
 String newname;
+String nat;
 
 run_once {
-  wx = world_x_size();
-  off = 6 * wx / 512;
-  if (off < 1) {
-    off = 1;
-  }
-  x1 = 154 * wx / 512;
-  y1 = 354 * wx / 512;
-  x2 = 450 * wx / 512;
-  y2 = 282 * wx / 512;
+  if (setup_done == 0) {
+    wx = world_x_size();
+    off = 6 * wx / 512;
+    if (off < 1) {
+      off = 1;
+    }
+    for (p = 1; p <= npl; p++) {
+      if (num_cities(p) == 0) {
+        x = start_x[p] * wx / 512;
+        y = start_y[p] * wx / 512;
+        create_building_near(p, x, y, "Small City", 1 * wx / 512);
+        if (num_cities(p) == 0) {
+          create_building_near(p, x, y, "Small City", 5 * wx / 512);
+        }
+        if (num_cities(p) == 0) {
+          create_building_near(p, x, y, "Small City", 10 * wx / 512);
+        }
+        create_unit(p, x + off, y + off, "Citizen", 5);
+        create_unit(p, x + off, y + off, "Scout", 1);
+      }
+    }
+    setup_done = 1;
 
-  create_building_near(1, x1, y1, "Small City", 1 * wx / 512);
-  if (num_cities(1) == 0) {
-    create_building_near(1, x1, y1, "Small City", 5 * wx / 512);
+    popup_dialog("Greco-Turkish War on a real map of the Aegean, Anatolia and the Balkans. Every city you found takes the real name of the nearest place, in your own language; captured cities are renamed by their new owner. Take all enemy cities to win.");
   }
-  if (num_cities(1) == 0) {
-    create_building_near(1, x1, y1, "Small City", 10 * wx / 512);
-  }
-  create_unit(1, x1 + off, y1 + off, "Citizen", 5);
-  create_unit(1, x1 + off, y1 + off, "Scout", 1);
-
-  create_building_near(2, x2, y2, "Small City", 1 * wx / 512);
-  if (num_cities(2) == 0) {
-    create_building_near(2, x2, y2, "Small City", 5 * wx / 512);
-  }
-  if (num_cities(2) == 0) {
-    create_building_near(2, x2, y2, "Small City", 10 * wx / 512);
-  }
-  create_unit(2, x2 + off, y2 + off, "Citizen", 5);
-  create_unit(2, x2 + off, y2 + off, "Scout", 1);
-
-  declare_war(1, 2);
-  declare_war(2, 1);
-
   set_timer("names", 1);
   set_timer("endcheck", 30);
-  setup_done = 1;
-
-  popup_dialog("Greco-Turkish War on a real map of the Aegean, Anatolia and the Balkans. Every city you found takes the real name of the nearest place, in your own language; captured cities are renamed by their new owner. Take all enemy cities to win.");
 }
 
 trigger NameCities(timer_expired("names"))
 {
   wx = world_x_size();
-  for (p = 1; p < 3; p++) {
+  for (p = 1; p <= npl; p++) {
+    nat = find_nation(p);
     n = num_cities(p);
     for (c = 0; c <= n; c++) {
       cname = find_city_with_num(p, c);
@@ -294,16 +295,18 @@ trigger NameCities(timer_expired("names"))
           }
           if (cap_done[p] == 0) {
             if (cap_slot[p] >= 0) {
-              best = cap_slot[p];
+              if (slot_used[cap_slot[p]] == 0) {
+                best = cap_slot[p];
+              }
             }
             cap_done[p] = 1;
           }
           if (best >= 0 && freeslot >= 0) {
-            if (p == 1) {
-              newname = gr_name[best];
+            if (nat == "turks") {
+              newname = tr_name[best];
             }
             else {
-              newname = tr_name[best];
+              newname = gr_name[best];
             }
             rename_city(p, cid, newname);
             slot_used[best] = 1;
@@ -314,11 +317,11 @@ trigger NameCities(timer_expired("names"))
         }
         else if (k_owner[found] != p) {
           cid = find_city_id(cname);
-          if (p == 1) {
-            newname = gr_name[k_slot[found]];
+          if (nat == "turks") {
+            newname = tr_name[k_slot[found]];
           }
           else {
-            newname = tr_name[k_slot[found]];
+            newname = gr_name[k_slot[found]];
           }
           if (!(newname == cname)) {
             rename_city(p, cid, newname);
@@ -344,13 +347,35 @@ trigger NameCities(timer_expired("names"))
 
 trigger CheckEnd(timer_expired("endcheck"))
 {
-  if (num_cities(1) == 0) {
-    victory(2);
-    defeat(1);
+  // a player without cities is out; the game ends when every remaining player is allied with the others
+  // (peace treaties alone don't end it)
+  for (p = 1; p <= npl; p++) {
+    if (!is_defeated(p)) {
+      if (num_cities(p) == 0) {
+        defeat(p);
+      }
+    }
   }
-  else if (num_cities(2) == 0) {
-    victory(1);
-    defeat(2);
+  alive = 0;
+  enemies = 0;
+  for (p = 1; p <= npl; p++) {
+    if (!is_defeated(p)) {
+      alive = alive + 1;
+      for (q = p + 1; q <= npl; q++) {
+        if (!is_defeated(q)) {
+          if (!have_alliance(p, q)) {
+            enemies = 1;
+          }
+        }
+      }
+    }
+  }
+  if (alive > 0 && enemies == 0) {
+    for (p = 1; p <= npl; p++) {
+      if (!is_defeated(p)) {
+        victory(p);
+      }
+    }
   }
   else {
     set_timer("endcheck", 5);

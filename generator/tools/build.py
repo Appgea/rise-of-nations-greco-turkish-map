@@ -15,7 +15,11 @@ GOODY_RECORD_SRC = GAME + '/scenario/Custom/skirmish/skirmish.sce'
 NATION = {'greeks': 5, 'turks': 8}
 LAND_THR = 0.35     # tile is land if >= 35% land (slightly widens coasts)
 WEST_MTN = 0.82     # mountain score multiplier west of 27E (Greece and the Balkans: more room to build)
-LEADERS = ('Eleftherios Venizelos', 'Mustafa Kemal Atatürk')
+# default leader names per nation, used in slot order (the setup screen keeps them for computer players)
+LEADERS = {'greeks': ['Eleftherios Venizelos', 'Ioannis Metaxas', 'Anastasios Papoulas'],
+           'turks': ['Mustafa Kemal Atatürk', 'İsmet İnönü', 'Fevzi Çakmak']}
+VARIANTS = (('frontier', 'Frontier', 'Greco-Turkish War - Frontier'), ('capitals', 'Capitals', 'Greco-Turkish War - Capitals'),
+            ('4p', '4P', 'Greco-Turkish War - 4 players'), ('6p', '6P', 'Greco-Turkish War - 6 players'))
 # peaks that should always carry a mountain/rock if it fits (lat, lon)
 PEAKS = [(35.30, 24.00), (35.23, 24.77), (34.93, 32.86), (40.08, 22.36), (38.53, 22.62), (36.95, 22.35),
          (40.07, 29.22), (38.53, 35.45), (38.13, 34.17), (39.70, 44.30), (39.70, 26.85), (40.17, 24.33)]
@@ -81,7 +85,7 @@ def compute_terrain(W, H):
     # a wood and a mine nearby (start cities first, so theirs are never cleared by a neighbour's)
     land_ok = cl & ~rcell
     kits = {}
-    starts = sorted({c for st in cities.STARTS.values() for c in st.values()})
+    starts = sorted({c for st in cities.STARTS.values() for c, _, _ in st})
     for name in starts + sorted(set(site_names) & cities.MAJOR - set(starts)):
         kits[name] = features.start_kit(mt, recs, forest, land_ok, score, sites[site_names.index(name)], rng,
                                         clear_r=1.8 if name in starts else 1.4)
@@ -240,24 +244,31 @@ def map_chunk(old, T):
             kids.append(c)
     return box(0x02, kids)
 
-AI_DIFFICULTY = 2   # 0 Easiest, 1 Easy, 2 Moderate, 3 Tough, 4 Tougher, 5 Toughest
-
-def set_players(root, nations, leaders, ai=(False, False)):
+def set_players(root, slots):
+    """slots: (nation id, leader name, team) per player. Extra slots are copies of the template's second player.
+    Every slot is human (multiplayer refuses scenarios with fewer than 2 humans); the setup screen turns slots
+    into computer players and changes nations and teams."""
+    import copy
     P = root.find(0x0b)
-    assert len(P.children) == 2
-    for p, nat, lead, is_ai in zip(P.children, nations, leaders, ai):
+    base = P.children[1]
+    P.children = [P.children[i] if i < 2 else copy.deepcopy(base) for i in range(len(slots))]
+    for i, (p, (nat, lead, team)) in enumerate(zip(P.children, slots)):
         info = p.find(0x6b); d = bytearray(info.data)
-        struct.pack_into('<i', d, 4, nat)
-        # LeaderPropertiesChunk3 (rise.pdb): 0x08 leader_flags (template has conquest transport locks), 0xdc is_human (4 = human);
-        # both players human, or multiplayer refuses the scenario ("supports less than 2 human players");
-        # 0xe8 difficulty applies to a computer player
-        struct.pack_into('<i', d, 0x08, 0); struct.pack_into('<i', d, 0xdc, 0 if is_ai else 4)
-        struct.pack_into('<i', d, 0xe8, AI_DIFFICULTY if is_ai else 0)
+        struct.pack_into('<i', d, 0, i); struct.pack_into('<i', d, 4, nat)
+        # LeaderPropertiesChunk3 (rise.pdb): 0x08 leader_flags (template has conquest transport locks),
+        # 0x10 city_name_index, 0xdc is_human (4 = human), 0xe4 team_color, 0xe8 difficulty
+        struct.pack_into('<i', d, 0x08, 0); struct.pack_into('<i', d, 0x10, 0)
+        struct.pack_into('<i', d, 0xdc, 4); d[0xe4] = i; struct.pack_into('<i', d, 0xe8, 0)
         nm = lead.encode('utf-16le') + b'\0\0'
-        d[20:20 + len(nm)] = nm
+        d[20:220] = (nm + bytes(200))[:200]
         info.data = bytes(d)
         t = p.find(0x26)
         t.children = [leaf(t.children[0].cid, u32s(0)), leaf(t.children[1].cid, b'')]
+        # DiploDataChunk (who, diplo, treaty) per player: 0 war / 2 ally by default team; self (i, 0, 0)
+        dip = [c for c in p.children if c.cid == 0x29][0]
+        ents = b''.join(struct.pack('<3i', j, 0, 0) if j == i else
+                        struct.pack('<3i', j, 2 if slots[j][2] == team else 0, 1) for j in range(len(slots)))
+        dip.children = [leaf(dip.children[0].cid, u32s(len(slots))), leaf(dip.children[1].cid, ents)]
 
 def set_header(root, title, starts):
     h = root.children[0]; assert h.cid == 0x6c
@@ -271,7 +282,9 @@ def set_header(root, title, starts):
     # game settings: start age Ancient (0), end age Information (7), Standard victory (0), no time limit (1)
     struct.pack_into('<i', d, 0xec, 0); struct.pack_into('<i', d, 0xf0, 7)
     struct.pack_into('<i', d, 0xfc, 0); struct.pack_into('<i', d, 0x104, 1)
-    struct.pack_into('<i', d, 0xe4, 1)   # 1 = use the scenario's own .bhs script (0 in conquest battle maps)
+    # scenario_flags: 1 = use the scenario's own .bhs script, 2 = SCENARIO_ALLOW_SETUP_OVERRIDE (nations, teams and
+    # computer players can be changed on the setup screen); team_style 11 = CUSTOM_OPEN
+    struct.pack_into('<i', d, 0xe4, 1 | 2); struct.pack_into('<i', d, 0xd0, 11)
     h.data = bytes(d)
 
 def put_list(root, cid, payload, count):
@@ -332,43 +345,36 @@ def main():
           f'forest {int(T["forest"].sum())} cells, rivers {len(T["polys"])}, resources {len(res)}, ruins {len(ruins)}, '
           f'city names {len(slots)}')
     made = []
-    for variant, title in (('capitals', 'Greco-Turkish War - Capitals'), ('frontier', 'Greco-Turkish War - Frontier')):
+    intro = ('Greco-Turkish War on a real map of the Aegean, Anatolia and the Balkans. '
+             'Every city you found takes the real name of the nearest place, in your own language; '
+             'captured cities are renamed by their new owner. Take all enemy cities to win.')
+    for variant, label, title in VARIANTS:
         st = cities.STARTS[variant]
         def pos(trname):
             cy, cx = T['kits'][trname]; return good_start(T, cx * 4 + 2, cy * 4 + 2 + T.get('yoff', 0))
-        starts = [pos(st['greeks']), pos(st['turks'])]
+        starts = [pos(c) for c, _, _ in st]
+        used = {'greeks': 0, 'turks': 0}; pslots = []
+        for c, nat, team in st:
+            pslots.append((NATION[nat], LEADERS[nat][used[nat] % len(LEADERS[nat])], team)); used[nat] += 1
         root = ronscx.load(TEMPLATE)
         root.children = [map_chunk(c, T) if c.cid == 0x02 else c for c in root.children]
         for c in root.children:
             if c.cid in (0x05, 0x06, 0x07): c.children = []
         put_list(root, 0x04, records(res, res_tmpl), len(res))
         put_list(root, 0x03, records(ruins, goody_tmpl), len(ruins))
-        set_players(root, (NATION['greeks'], NATION['turks']), LEADERS)
+        set_players(root, pslots)
         set_header(root, title, starts)
-        name = 'GrecoTurkish_' + variant.capitalize() + suffix
+        name = 'GrecoTurkish_' + label + suffix
         d = os.path.join(a.out, name); os.makedirs(d, exist_ok=True)
         ronscx.save(root, os.path.join(d, name + '.scx'))
         shutil.copyfile(os.path.join(d, name + '.scx'), os.path.join(d, name + '.sce'))
-        intro = ('Greco-Turkish War on a real map of the Aegean, Anatolia and the Balkans. '
-                 'Every city you found takes the real name of the nearest place, in your own language; '
-                 'captured cities are renamed by their new owner. Take all enemy cities to win.')
-        caps = tuple(next(i for i, s in enumerate(slots) if s[3] == st[k]) for k in ('greeks', 'turks'))
-        bhs = scriptgen.make_script(title, W, slots, starts[0], starts[1], LEADERS, intro, cap_slots=caps)
+        caps = [next(i for i, s_ in enumerate(slots) if s_[3] == c) for c, _, _ in st]
+        bhs = scriptgen.make_script(title, W, slots, starts, intro, cap_slots=caps)
         # RoN's script reader needs CRLF line endings (with LF the whole file is one line = one comment)
         open(os.path.join(d, name + '.bhs'), 'wb').write(bhs.replace(chr(13) + chr(10), chr(10)).replace(chr(10), chr(13) + chr(10)).encode('cp1252'))
         preview(os.path.join(d, 'preview.png'), T, res, ruins, slots, starts)
         made.append((name, d))
         print('wrote', d)
-        # solo variant: the Turks are played by the computer (multiplayer needs both slots human)
-        set_players(root, (NATION['greeks'], NATION['turks']), LEADERS, ai=(False, True))
-        set_header(root, title + ' vs AI', starts)
-        ai_name = name + '_vsAI'; da = os.path.join(a.out, ai_name); os.makedirs(da, exist_ok=True)
-        ronscx.save(root, os.path.join(da, ai_name + '.scx'))
-        shutil.copyfile(os.path.join(da, ai_name + '.scx'), os.path.join(da, ai_name + '.sce'))
-        shutil.copyfile(os.path.join(d, name + '.bhs'), os.path.join(da, ai_name + '.bhs'))
-        shutil.copyfile(os.path.join(d, 'preview.png'), os.path.join(da, 'preview.png'))
-        made.append((ai_name, da))
-        print('wrote', da)
     if a.install:
         for name, d in made:
             dst = os.path.join(GAME, 'scenario', 'Custom', name)

@@ -1,6 +1,6 @@
-"""Generate the RoN scenario script (.bhs): start setup + real-place city naming."""
+"""Generate the RoN scenario script (.bhs): start setup + real-place city naming, for 2 to 8 player slots."""
 
-KMAX = 128   # max cities tracked over a game
+KMAX = 160   # max cities tracked over a game
 
 def _arr(vals, kind='int', per_line=16):
     if kind == 'String':
@@ -10,17 +10,22 @@ def _arr(vals, kind='int', per_line=16):
     lines = [', '.join(items[i:i + per_line]) for i in range(0, len(items), per_line)]
     return '[' + ',\n    '.join(lines) + ']'
 
-def make_script(title, W, slots, start1, start2, leaders, intro, test_lines='', cap_slots=(-1, -1)):
-    """slots: list of (tile_x, tile_y, greek_name, turkish_name[, pull]); start*: (tile_x, tile_y).
-    pull (tiles) lets big cities claim a new city's name from further away."""
-    n = len(slots)
+def make_script(title, W, slots, starts, intro, test_lines='', cap_slots=None):
+    """slots: list of (tile_x, tile_y, greek_name, turkish_name[, pull]); starts: one (tile_x, tile_y) per player slot;
+    cap_slots: index into slots of each player's capital name. pull (tiles) lets big cities claim a new city's name
+    from further away. Players of the Turks nation get Turkish names, everyone else Greek-side names."""
+    n = len(slots); npl = len(starts)
+    cap_slots = list(cap_slots or [-1] * npl)
     pull = _arr([(s[4] if len(s) > 4 else 0) ** 2 for s in slots])
     sx = _arr([s[0] for s in slots]); sy = _arr([s[1] for s in slots])
     gr = _arr([s[2] for s in slots], 'String', 8); tr = _arr([s[3] for s in slots], 'String', 8)
     zeros = _arr([0] * n); kz = _arr([0] * KMAX); ks = _arr([''] * KMAX, 'String', 32)
+    px = _arr([0] + [x for x, _ in starts]); py = _arr([0] + [y for _, y in starts])
+    cap = _arr([-1] + cap_slots); pz = _arr([0] * (npl + 1))
     return f'''// {title}
 // Generated map script: starting cities, and every city takes the name of the nearest real place.
-// Greek player (1) gets Greek names, Turkish player (2) gets Turkish names; captured cities are renamed.
+// Turks get Turkish names, every other nation Greek-side names; captured cities are renamed by the new owner.
+// Save games: run_once does not run again on load, and the start setup is also guarded by setup_done.
 
 scenario
 {{
@@ -41,11 +46,15 @@ static String k_name[] = {ks};
 static int k_owner[] = {kz};
 static int k_slot[] = {kz};
 
+static int npl = {npl};
+static int start_x[] = {px};
+static int start_y[] = {py};
+static int cap_slot[] = {cap};
+static int cap_done[] = {pz};
 static int setup_done = 0;
-static int cap_slot[] = [-1, {cap_slots[0]}, {cap_slots[1]}];
-static int cap_done[] = [0, 0, 0];
 
 int p;
+int q;
 int c;
 int n;
 int i;
@@ -62,58 +71,49 @@ int found;
 int freeslot;
 int wx;
 int off;
-int x1;
-int y1;
-int x2;
-int y2;
+int x;
+int y;
+int alive;
+int enemies;
 String cname;
 String newname;
+String nat;
 
 run_once {{
-  wx = world_x_size();
-  off = 6 * wx / {W};
-  if (off < 1) {{
-    off = 1;
+  if (setup_done == 0) {{
+    wx = world_x_size();
+    off = 6 * wx / {W};
+    if (off < 1) {{
+      off = 1;
+    }}
+    for (p = 1; p <= npl; p++) {{
+      if (num_cities(p) == 0) {{
+        x = start_x[p] * wx / {W};
+        y = start_y[p] * wx / {W};
+        create_building_near(p, x, y, "Small City", 1 * wx / {W});
+        if (num_cities(p) == 0) {{
+          create_building_near(p, x, y, "Small City", 5 * wx / {W});
+        }}
+        if (num_cities(p) == 0) {{
+          create_building_near(p, x, y, "Small City", 10 * wx / {W});
+        }}
+        create_unit(p, x + off, y + off, "Citizen", 5);
+        create_unit(p, x + off, y + off, "Scout", 1);
+      }}
+    }}
+    setup_done = 1;
+{test_lines}
+    popup_dialog("{intro}");
   }}
-  x1 = {start1[0]} * wx / {W};
-  y1 = {start1[1]} * wx / {W};
-  x2 = {start2[0]} * wx / {W};
-  y2 = {start2[1]} * wx / {W};
-
-  create_building_near(1, x1, y1, "Small City", 1 * wx / {W});
-  if (num_cities(1) == 0) {{
-    create_building_near(1, x1, y1, "Small City", 5 * wx / {W});
-  }}
-  if (num_cities(1) == 0) {{
-    create_building_near(1, x1, y1, "Small City", 10 * wx / {W});
-  }}
-  create_unit(1, x1 + off, y1 + off, "Citizen", 5);
-  create_unit(1, x1 + off, y1 + off, "Scout", 1);
-
-  create_building_near(2, x2, y2, "Small City", 1 * wx / {W});
-  if (num_cities(2) == 0) {{
-    create_building_near(2, x2, y2, "Small City", 5 * wx / {W});
-  }}
-  if (num_cities(2) == 0) {{
-    create_building_near(2, x2, y2, "Small City", 10 * wx / {W});
-  }}
-  create_unit(2, x2 + off, y2 + off, "Citizen", 5);
-  create_unit(2, x2 + off, y2 + off, "Scout", 1);
-
-  declare_war(1, 2);
-  declare_war(2, 1);
-
   set_timer("names", 1);
   set_timer("endcheck", 30);
-  setup_done = 1;
-{test_lines}
-  popup_dialog("{intro}");
 }}
 
 trigger NameCities(timer_expired("names"))
 {{
   wx = world_x_size();
-  for (p = 1; p < 3; p++) {{
+  for (p = 1; p <= npl; p++) {{
+    nat = find_nation(p);
     n = num_cities(p);
     for (c = 0; c <= n; c++) {{
       cname = find_city_with_num(p, c);
@@ -153,16 +153,18 @@ trigger NameCities(timer_expired("names"))
           }}
           if (cap_done[p] == 0) {{
             if (cap_slot[p] >= 0) {{
-              best = cap_slot[p];
+              if (slot_used[cap_slot[p]] == 0) {{
+                best = cap_slot[p];
+              }}
             }}
             cap_done[p] = 1;
           }}
           if (best >= 0 && freeslot >= 0) {{
-            if (p == 1) {{
-              newname = gr_name[best];
+            if (nat == "turks") {{
+              newname = tr_name[best];
             }}
             else {{
-              newname = tr_name[best];
+              newname = gr_name[best];
             }}
             rename_city(p, cid, newname);
             slot_used[best] = 1;
@@ -173,11 +175,11 @@ trigger NameCities(timer_expired("names"))
         }}
         else if (k_owner[found] != p) {{
           cid = find_city_id(cname);
-          if (p == 1) {{
-            newname = gr_name[k_slot[found]];
+          if (nat == "turks") {{
+            newname = tr_name[k_slot[found]];
           }}
           else {{
-            newname = tr_name[k_slot[found]];
+            newname = gr_name[k_slot[found]];
           }}
           if (!(newname == cname)) {{
             rename_city(p, cid, newname);
@@ -203,13 +205,35 @@ trigger NameCities(timer_expired("names"))
 
 trigger CheckEnd(timer_expired("endcheck"))
 {{
-  if (num_cities(1) == 0) {{
-    victory(2);
-    defeat(1);
+  // a player without cities is out; the game ends when every remaining player is allied with the others
+  // (peace treaties alone don't end it)
+  for (p = 1; p <= npl; p++) {{
+    if (!is_defeated(p)) {{
+      if (num_cities(p) == 0) {{
+        defeat(p);
+      }}
+    }}
   }}
-  else if (num_cities(2) == 0) {{
-    victory(1);
-    defeat(2);
+  alive = 0;
+  enemies = 0;
+  for (p = 1; p <= npl; p++) {{
+    if (!is_defeated(p)) {{
+      alive = alive + 1;
+      for (q = p + 1; q <= npl; q++) {{
+        if (!is_defeated(q)) {{
+          if (!have_alliance(p, q)) {{
+            enemies = 1;
+          }}
+        }}
+      }}
+    }}
+  }}
+  if (alive > 0 && enemies == 0) {{
+    for (p = 1; p <= npl; p++) {{
+      if (!is_defeated(p)) {{
+        victory(p);
+      }}
+    }}
   }}
   else {{
     set_timer("endcheck", 5);

@@ -9,7 +9,7 @@ A two-player map, Greeks vs Turks, built from real geodata. It covers:
 
 Every city you found takes the name of the nearest real place, in your own language.
 
-**Steam Workshop:** [GrecoTurkishWar](https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863). Subscribe and the
+**Steam Workshop:** [Greco-Turkish War](https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863). Subscribe and the
 game installs it for you; it's also what makes online multiplayer work.
 
 ![Map overview](docs/images/overview.png)
@@ -47,8 +47,11 @@ game installs it for you; it's also what makes online multiplayer work.
 ![City names](docs/images/city_names.png)
 
 ## Screenshots
-**Frontier vs AI:** the Greek start at Thessaloniki, with farms, a woodcutter's camp, a mineable rock and the beach.
+**Frontier:** the Greek start at Thessaloniki, with farms, a woodcutter's camp, a mineable rock and the beach.
 ![Thessaloniki in game](docs/images/ingame_thessaloniki.jpg)
+
+**4 players:** you and 3 bots, with every capital named and the Greek and Turkish teams set on the setup screen.
+![Four players in game](docs/images/ingame_4p.jpg)
 
 **Capitals:** the Athens start, with a mineable rock to the north, woods on three sides and Penteli marble.
 ![Athina in game](docs/images/ingame_athina.jpg)
@@ -57,53 +60,69 @@ game installs it for you; it's also what makes online multiplayer work.
 ![Coast before and after](docs/images/coast_before_after.jpg)
 
 ## Scenarios
-| Scenario | Greeks start | Turks start | Use |
-|---|---|---|---|
-| `GrecoTurkish_Frontier` | Thessaloniki | Bursa | multiplayer; faster clash around Thrace and the Marmara |
-| `GrecoTurkish_Capitals` | Athina | Ankara | multiplayer; long build-up |
-| `GrecoTurkish_Frontier_vsAI` | Thessaloniki | Bursa | solo: you play the Greeks, the computer the Turks |
-| `GrecoTurkish_Capitals_vsAI` | Athina | Ankara | solo against the computer |
+| Scenario | Players | Default slots (slot: nation, start city, team) |
+|---|---|---|
+| `GrecoTurkish_Frontier` | 2 | 1: Greeks, Thessaloniki · 2: Turks, Bursa. A faster clash around Thrace and the Marmara |
+| `GrecoTurkish_Capitals` | 2 | 1: Greeks, Athens · 2: Turks, Ankara. A long build-up |
+| `GrecoTurkish_4P` | 4 | Frontier and Capitals starts together: Greeks (team 1) vs Turks (team 2) |
+| `GrecoTurkish_6P` | 6 | 4P plus Greeks at Sofia and Turks at Konya |
 
-Each side starts in the Ancient Age with a Small City, 5 Citizens and a Scout. The game runs up to the
-Information Age. You win by taking every enemy city.
+Each player starts in the Ancient Age with a Small City, 5 Citizens and a Scout. The game runs up to the
+Information Age. A player without cities is out, and the game ends when everyone left is allied.
 
-The leaders are Eleftherios Venizelos (Greeks, slot 1) and Mustafa Kemal Atatürk (Turks, slot 2). The computer
-plays on Moderate; change `AI_DIFFICULTY` in `generator/tools/build.py` and rebuild for another level.
+## What you can set on the setup screen
+These scenarios let the setup screen override them, so in **Quick Battle** or a **multiplayer lobby** you choose:
+- **who plays each slot:** you, a friend, or a bot (**Computer**, **Computer/Rush** or **Computer/Boom**) with its own
+  **difficulty**;
+- **nation, color and team** for every slot. The defaults are Greeks vs Turks; any nation works;
+- **game speed**, **Turbo Resources**, **No Nation Powers**, **No Unique Units** and **Cooperative AI**.
+
+The number of players comes from the scenario you pick (2, 4 or 6), and every slot must be filled, by a human or a
+bot. Map, start age, end age and victory rules come from the scenario.
+
+Cities get Turkish names for a Turks player and Greek-side names for any other nation.
 
 ## Install
-**Recommended: Steam Workshop.** Subscribe to [GrecoTurkishWar](https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863)
+**Recommended: Steam Workshop.** Subscribe to [Greco-Turkish War](https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863)
 and restart the game. Steam keeps it up to date, and online games need the Workshop version.
 
-**Manual (solo only):** download `GrecoTurkish-v1.1.zip` from [Releases](../../releases) and extract it into the game's
+**Manual (solo only):** download the zip from [Releases](../../releases) and extract it into the game's
 `scenario\Custom\` folder (Steam → Rise of Nations → ⚙ → Manage → **Browse local files**).
 
-## Play against the computer
+## Play against bots
 1. **Solo Game → Quick Battle.** This opens the setup screen.
-2. Set **Game Rules: Scenario**, then pick `custom\grecoturkish_frontier\...` (or `..._capitals`) under **Scenario**.
-3. Slot 1 is you, as the Greeks. Set slot 2 (the Turks) to **Computer**, **Computer/Rush** or **Computer/Boom**,
-   and pick the difficulty.
+2. Set **Game Rules: Scenario** and pick a scenario under **Scenario**: `custom\grecoturkish_frontier\...`,
+   `..._capitals`, `..._4p` or `..._6p`.
+3. Slot 1 is you. Set the other slots to **Computer** and pick their difficulty, nation and team.
 4. Press **Start**.
 
 ![Setup screen](docs/images/setup_screen.jpg)
 
-Nations and teams are locked by the scenario. The `_vsAI` scenarios start straight against a Moderate computer if you
-use **Solo Game → Load a Scenario** instead (manual install only).
-
-## Play with a friend online
+## Play with a friend online, with or without bots
 This runs on the game's own online lobby through Steam. You don't need Hamachi or a shared network.
 1. Both players subscribe to the [Workshop item](https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863)
    and update the game.
-2. The host goes to **Multiplayer Game → Game Browser → Create**. Set Max Players 2 and Visibility **Private**.
-3. In the lobby, set **Game Rules: Scenario**, then pick `custom\grecoturkish_frontier\grecoturkish_frontier`
-   (or `..._capitals`).
-4. Press **Invite Friend** and invite your friend through Steam. They take slot 2, the Turks.
-5. Press **Start**. Within about 2 seconds the capitals get their real names.
+2. The host goes to **Multiplayer Game → Game Browser → Create**. Set Max Players to the scenario's size and
+   Visibility to **Private**.
+3. In the lobby, set **Game Rules: Scenario** and pick the scenario.
+4. Press **Invite Friend** and invite your friend through Steam. Set the remaining slots to **Computer** for bots, and
+   use the Team column to play together against them (for example, both of you on team 1 in `4P`).
+5. Press **Start**. Within about 2 seconds every capital gets its real name.
 
 ![Online lobby](docs/images/online_lobby.jpg)
 
 Online play needs the Workshop version: the game refuses unpublished scenarios in multiplayer ("You must publish your
-scenario before you can play it in a multiplayer game"). It also needs both slots set to Human in the file, which the
-multiplayer scenarios are.
+scenario before you can play it in a multiplayer game"). It also needs at least 2 human slots in the file; every slot
+in these scenarios is human by default.
+
+## Saving and resuming
+- **Game Menu (Esc) → Save Game** at any time; **Load Game** resumes it. Saves are in
+  `Documents\My Games\Rise of Nations\Saves`.
+- The game also keeps autosaves in the **AutoSaves** folder of the same dialog, so a crash or disconnect costs a few
+  minutes at most.
+- The map script is save-safe. After loading, the start setup doesn't run again, and naming continues: tested by
+  saving, loading and founding a new city, which got its real name (Kavala).
+- In multiplayer, the host saves; to resume, the same players load the save from the multiplayer setup.
 
 ## Rebuild or tweak the map
 The `generator/` folder holds the full pipeline. It needs Python 3 (tested with 3.14) on Windows with the game
@@ -131,7 +150,8 @@ The build is deterministic: the same code and data always produce the same `.scx
 | Map extent (the north edge is computed so the map stays square) | `LON0, LON1, LAT0` in `tools/geo.py` |
 | How much Greece is widened | `GROW_BOX`, `GROW_TILES` in `tools/terrain.py` |
 | Start kits (clear ring, wood and metal distances) | `start_kit` in `tools/features.py` |
-| Mountain density, AI difficulty, leaders, nations | constants at the top of `tools/build.py` |
+| Default slots (start city, nation, team) for each scenario | `STARTS` in `tools/cities.py` |
+| Mountain density, leaders, nations | constants at the top of `tools/build.py` |
 
 Other tools:
 - `tools/metrics.py 512` and `tools/greece_metric.py 512`: playability reports (city spots, wood and metal near each town).
@@ -160,11 +180,10 @@ The format notes, including the engine limits that crash the game if you get the
 
 ## Status
 - Tested in RoN: Extended Edition 1.20:
-  - both scenarios load and play in solo;
-  - Frontier vs AI loads and plays against the computer;
-  - the capitals spawn, get their real names and have wood, metal and farm room.
-  - published to the Steam Workshop; the setup screen starts it against the computer; a private online lobby accepts
-    it with Game Rules: Scenario.
+  - the scenarios load and play from the solo setup screen, with bots, edited nations and teams;
+  - 4 players (you + 3 bots) start with real capital names and wood, metal and farm room;
+  - saving and loading mid-game keeps the naming script working;
+  - published to the Steam Workshop; a private online lobby accepts it with Game Rules: Scenario.
 - Not yet tested: a full two-PC online game, renaming on capture, and the end-of-game check. Please open an issue
   if something breaks.
 

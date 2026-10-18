@@ -23,12 +23,12 @@ Top level (2-player scenario): `0x6c` header, `0x0b` players, `0x02` map, `0x0a`
 | 0x00 | num_chunks | |
 | 0x04 | file_id | |
 | 0x08 | name[200] | UTF-16 |
-| 0xd0 | team_style | |
+| 0xd0 | team_style | `GameStyleIndex`: 11 CUSTOM_OPEN, 12 CUSTOM_CLOSED |
 | 0xd4 | game_rules | |
 | 0xd8 | map_style | |
 | 0xdc | map_size | |
 | 0xe0 | map_seed | |
-| 0xe4 | scenario_flags | **bit 0 must be set or the scenario's `.bhs` script is ignored** |
+| 0xe4 | scenario_flags | bit 0 `SCENARIO_LOAD_SCRIPT`: **must be set or the `.bhs` script is ignored**; bit 1 `SCENARIO_ALLOW_SETUP_OVERRIDE`: the setup screen may change nations, teams and computer players |
 | 0xe8 | game_speed | |
 | 0xec | start_tech | start age, 0 = Ancient |
 | 0xf0 | end_tech | 7 = Information |
@@ -78,6 +78,17 @@ Older scenarios use header `0x67` (300 bytes).
 | 0x400 | COOP_SOLO |
 
 The `0x26` chunk holds starting techs. A count of 0 gives a clean Ancient Age start.
+
+`0x29` holds diplomacy: `0x2a` count, then one `DiploDataChunk` (`who, diplo, treaty`) per player. `diplo` is
+0 war, 1 peace, 2 ally (3 contact, 4 no negotiation). Each player's entry for itself is `(i, 0, 0)`; the setup screen
+reads default teams from the ally pairs.
+
+Nation ids (`TribeIndex`): 0 Aztecs, 1 Maya, 2 Inca, 3 Bantu, 4 Nubians, 5 Greeks, 6 Romans, 7 Egyptians, 8 Turks,
+9 Spanish, 10 French, 11 British, 12 Germans, 13 Russians, 14 Chinese, 15 Japanese, 16 Koreans, 17 Mongols,
+18 Iroquois, 19 Lakota, 20 Americans, 21 Indians, 22 Dutch, 23 Persians.
+
+Extra player slots can be added by copying a `0x24` player block and renumbering `who`; the setup screen then shows
+that many slots, and each must be filled by a human or a computer.
 
 ## Map `0x02`
 The map is W×H tiles, with "coarse" cells of 4×4 tiles.
@@ -129,6 +140,10 @@ tiles from the water), which makes the smooth sand beach.
 - Useful calls: `create_building_near`, `rename_city`, `find_city_with_num`, `find_city_id`,
   `object_position_x/y`, `world_x_size`, `num_cities`, `city_exists`, `set_timer`/`timer_expired`,
   `declare_war`, `popup_dialog`, `victory`, `defeat`. String inequality is written `!(a == b)`.
+- `run_once` does not run again when a saved game is loaded; `static` variables and timers are restored from the save.
+- `get_difficulty()` does not compile in a scenario script, although `scriptfunctions.xml` lists it.
+- The setup screen's description panel reads `scen_script_loc.xml`, keyed by an internal string hash; without it the
+  panel shows "Description for scenario <name>.bhs".
 - See `generator/tools/scriptgen.py` for a complete working script with nearest-place naming and rename-on-capture.
 
 ## Steam Workshop mods

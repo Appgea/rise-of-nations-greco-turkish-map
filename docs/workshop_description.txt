@@ -1,0 +1,27 @@
+[h1]Greco-Turkish War: a real map for Rise of Nations: Extended Edition[/h1]
+A 2 to 6 player map of Greece, the Aegean, western and central Anatolia, Cyprus and the Balkans up to the Danube, built from real geodata: coastlines, elevation, rivers and satellite imagery.
+
+[h2]Features[/h2]
+[list]
+[*]512x512 real map (about 2.6 km per tile) with the Bosphorus, the Dardanelles and the Gulf of Corinth open
+[*]Every city takes the name of the nearest real place: 291 places, with Turkish names for a Turks player and Greek-side names for every other nation. Captured cities are renamed by the new owner.
+[*]Mountains on the real ranges, organic forests, 9 major rivers and 516 resources at real sites (Penteli marble, Ploiesti oil, Bor copper and more)
+[*]Every start and every big historic city has a wood, a mineable rock and room for farms
+[*]Set any slot to Computer (Rush or Boom, any difficulty) and change nations and teams on the setup screen
+[*]Save and load at any time; the map script carries on after a load
+[/list]
+
+[h2]Scenarios[/h2]
+[list]
+[*][b]GrecoTurkish_Frontier[/b]: 2 players, Thessaloniki vs Bursa
+[*][b]GrecoTurkish_Capitals[/b]: 2 players, Athens vs Ankara
+[*][b]GrecoTurkish_4P[/b]: 4 players, Greeks vs Turks
+[*][b]GrecoTurkish_6P[/b]: 6 players, adds Sofia and Konya
+[/list]
+
+[h2]How to play[/h2]
+[b]Against bots:[/b] Solo Game > Quick Battle > Game Rules: Scenario > pick a GrecoTurkish scenario > set the other slots to Computer > Start.
+[b]Online with friends:[/b] Multiplayer Game > Game Browser > Create > Game Rules: Scenario > pick a scenario > Invite Friend. Fill any remaining slots with Computer.
+[b]Saves:[/b] Esc > Save Game / Load Game. Autosaves are kept too.
+
+Source, documentation and the map generator: [url=https://github.com/Appgea/rise-of-nations-greco-turkish-map]github.com/Appgea/rise-of-nations-greco-turkish-map[/url]

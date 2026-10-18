@@ -1,16 +1,19 @@
-Greco-Turkish War - Rise of Nations: Extended Edition map  (v1.1)
+Greco-Turkish War - Rise of Nations: Extended Edition map  (v1.2)
 
-INSTALL
-Extract all four folders into your game folder under scenario\Custom\
-(Steam > Rise of Nations > Manage > Browse local files), so you get e.g.
-  scenario\Custom\GrecoTurkish_Frontier\GrecoTurkish_Frontier.scx
+EASIEST: subscribe on the Steam Workshop (needed for online play):
+  https://steamcommunity.com/sharedfiles/filedetails/?id=3822466863
 
-SOLO (against the computer)
-Solo Game > Load a Scenario > GrecoTurkish_Frontier_vsAI or GrecoTurkish_Capitals_vsAI.
+MANUAL INSTALL (solo only)
+Extract the four folders into your game folder under scenario\Custom\
+(Steam > Rise of Nations > Manage > Browse local files).
 
-MULTIPLAYER (online through Steam, no shared network needed)
-Both players install the same files and update the game.
-Host: Multiplayer > Online > create game > Game Rules: Scenario > GrecoTurkish_Frontier or _Capitals.
-Slot 1 = Greeks, slot 2 = Turks.
+PLAY AGAINST BOTS
+Solo Game > Quick Battle > Game Rules: Scenario > pick GrecoTurkish_Frontier, _Capitals, _4P or _6P.
+Set the other slots to Computer, choose difficulty, nations and teams, then Start.
+
+ONLINE (no Hamachi): Multiplayer Game > Game Browser > Create > Game Rules: Scenario.
+Invite Friend; set any remaining slots to Computer.
+
+SAVES: Esc > Save Game / Load Game. Autosaves are in the AutoSaves folder.
 
 More: https://github.com/Appgea/rise-of-nations-greco-turkish-map

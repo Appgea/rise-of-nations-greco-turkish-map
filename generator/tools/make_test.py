@@ -20,11 +20,11 @@ test = f"""  create_building_near(1, {izm[0]} * wx / {W}, {izm[1]} * wx / {W}, "
   add_reveal_point(1, {ank[0]} * wx / {W}, {ank[1]} * wx / {W}, 14 * wx / {W});"""
 import re
 bhs = open(os.path.join(src, 'GrecoTurkish_Capitals.bhs'), encoding='cp1252').read()
-m1 = re.search(r'x1 = (\d+) \* wx / \d+;\s*y1 = (\d+) \* wx / \d+;\s*x2 = (\d+) \* wx / \d+;\s*y2 = (\d+) \* wx / \d+;', bhs)
-s1 = (int(m1.group(1)), int(m1.group(2))); s2 = (int(m1.group(3)), int(m1.group(4)))
+m1 = re.search(r'static int start_x\[\] = \[0, (\d+), (\d+)\];\s*static int start_y\[\] = \[0, (\d+), (\d+)\];', bhs)
+s1 = (int(m1.group(1)), int(m1.group(3))); s2 = (int(m1.group(2)), int(m1.group(4)))
 intro = 'TEST BUILD: Greek test city at Izmir, Turkish test city at Thessaloniki.'
 caps = (next(i for i, s in enumerate(slots) if s[3] == 'Atina'), next(i for i, s in enumerate(slots) if s[3] == 'Ankara'))
-out = scriptgen.make_script('zR_test', W, slots, s1, s2, build.LEADERS, intro, test, cap_slots=caps)
+out = scriptgen.make_script('zR_test', W, slots, [s1, s2], intro, test, cap_slots=caps)
 open(os.path.join(dst, 'zR_test.bhs'), 'wb').write(out.replace('\r\n', '\n').replace('\n', '\r\n').encode('cp1252'))
 for ext in ('.scx', '.sce'):
     shutil.copyfile(os.path.join(src, 'GrecoTurkish_Capitals' + ext), os.path.join(dst, 'zR_test' + ext))
