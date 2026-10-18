@@ -115,10 +115,10 @@ def pipeline(T, scale=2):
     idx = e * (len(ramp) - 1); i0 = np.floor(idx).astype(int); i1 = np.minimum(i0 + 1, len(ramp) - 1); t = (idx - i0)[..., None]
     elev = (ramp[i0] * (1 - t) + ramp[i1] * t).astype(np.uint8); elev[T['water']] = SEA
     tex = TEXCOL[K4(T['tex'])].astype(np.uint8); tex[T['water']] = SEA
-    panels = [(land, '1  Coastline: Natural Earth 10m land, islands, lakes'),
+    panels = [(land, '1  Coastline: Natural Earth 10m land and islands, Greece widened'),
               (elev, '2  Real elevation (Terrarium DEM), later smoothed so cities fit'),
               (tex, '3  Ground colour from NASA Blue Marble'),
-              (terrain_rgb(T), '4  Mountains on real ranges, forests, 30 rivers')]
+              (terrain_rgb(T), '4  Mountains on real ranges, forests, 9 major rivers')]
     pw, ph = W * scale, H * scale; pad, cap = 16, 44
     im = Image.new('RGB', (2 * pw + 3 * pad, 2 * (ph + cap) + 3 * pad), (20, 22, 28)); dr = ImageDraw.Draw(im)
     f = font(22, True)

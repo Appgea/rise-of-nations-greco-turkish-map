@@ -9,7 +9,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TEMPLATES = {int(k): np.array(v) for k, v in json.load(open(os.path.join(HERE, 'mtn_templates.json'))).items()}
 ROCK_TID = 15            # smallest stamp (8 cells), used for metal outcrops
 BIG_FIRST = sorted([t for t in TEMPLATES if t != ROCK_TID], key=lambda t: -len(TEMPLATES[t]))
-# at ~22 km per coarse cell the big stamps (47-72 cells) are wider than real ranges; use medium+small ones
+# the big stamps (47-72 cells) are wider than real ranges; use medium+small ones
 STAMP_ORDER = [t for t in BIG_FIRST if len(TEMPLATES[t]) <= 30] + [ROCK_TID]
 
 def cell_land(water):
@@ -81,33 +81,134 @@ def add_rocks(mountains, recs, allowed, score, max_gap=5):
         recs.append((int(cy) * 256 + int(cx), ROCK_TID, len(fp)))
     return mountains, recs
 
-def forests(forest_idx, allowed, real_frac=0.16, max_gap=5):
-    """Forest cells: the most forested real areas, plus small groves so no land is far from wood."""
-    vals = forest_idx[allowed]
-    thr = np.quantile(vals, 1 - real_frac)
-    f = allowed & (forest_idx >= thr)
-    # remove speckle, keep clumps
-    f = ndimage.binary_opening(f, np.ones((2, 2), bool)) | (f & ndimage.binary_erosion(f, np.ones((1, 3), bool)))
-    for _ in range(600):
+def blob(cy, cx, n, ok, rng):
+    """Organic patch of about n cells grown from (cy, cx) inside ok. Growth favours cells that touch the
+    patch on several sides, with randomness, so patches are roundish and ragged, never boxes."""
+    H, W = ok.shape
+    if not (0 <= cy < H and 0 <= cx < W) or not ok[cy, cx]:
+        return None
+    cells = {(int(cy), int(cx))}
+    while len(cells) < n:
+        cand = {}
+        for y, x in cells:
+            for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                q = (y + dy, x + dx)
+                if q not in cells and 0 <= q[0] < H and 0 <= q[1] < W and ok[q]:
+                    cand[q] = cand.get(q, 0) + 1
+        if not cand:
+            break
+        ks = sorted(cand); w = np.array([cand[k] for k in ks], float) ** 2
+        cells.add(ks[int(rng.choice(len(ks), p=w / w.sum()))])
+    m = np.zeros_like(ok)
+    for y, x in cells: m[y, x] = True
+    return m
+
+def forests(forest_idx, allowed, real_frac=0.16, max_gap=5, seed=7):
+    """Forest cells: the most forested real areas, plus small groves so no land is far from wood.
+    Single cells and pairs render as square tree blocks, so patches are at least 4 cells and ragged."""
+    rng = np.random.default_rng(seed)
+    noise = ndimage.gaussian_filter(rng.standard_normal(forest_idx.shape), 1.0)
+    fi = ndimage.gaussian_filter(forest_idx, 0.7) + 0.6 * noise / noise.std() * forest_idx[allowed].std()
+    thr = np.quantile(fi[allowed], 1 - real_frac)
+    f = allowed & (fi >= thr)
+    lab, n = ndimage.label(f)
+    f &= np.bincount(lab.ravel())[lab] >= 4
+    allowed = allowed.copy()
+    for _ in range(800):
         dist = ndimage.distance_transform_edt(~f)
         need = allowed & (dist > max_gap)
         if not need.any(): break
-        lab, n = ndimage.label(need)
-        # one grove per worst region per pass
         cy, cx = np.unravel_index(np.argmax(np.where(need, dist + forest_idx * 2, -1)), f.shape)
-        grove = np.zeros_like(f)
-        grove[max(cy - 1, 0):cy + 2, max(cx - 1, 0):cx + 1] = True    # one 3x2 grove instead of scattered specks
-        f |= grove & allowed
-        if not (grove & allowed).any(): allowed = allowed.copy(); allowed[cy, cx] = False
+        g = blob(cy, cx, int(rng.integers(5, 8)), allowed & ~f, rng)
+        if g is None or g.sum() < 4:
+            allowed[cy, cx] = False; continue
+        f |= g
     return f
+
+def mask_from_recs(shape, recs):
+    m = np.zeros(shape, bool)
+    for pos, tid, _ in recs:
+        cy, cx = divmod(pos, 256); fp = TEMPLATES[tid]
+        ys, xs = fp[:, 0] + cy, fp[:, 1] + cx
+        k = (ys >= 0) & (xs >= 0) & (ys < shape[0]) & (xs < shape[1])
+        m[ys[k], xs[k]] = True
+    return m
+
+def start_kit(mt, recs, forest, land_ok, score, site, rng, clear_r=1.8, wood_r=(2.2, 3.0), metal_r=(2.2, 3.4)):
+    """A playable start around coarse cell `site`: a clear disk (city plus farms), an organic forest
+    about 8-12 tiles out and a mineable rock on another side. Returns the kit centre cell."""
+    ch, cw = mt.shape
+    yy, xx = np.mgrid[0:ch, 0:cw]
+    # centre: the nearest cell to the site that has solid land around it
+    inland = ndimage.distance_transform_edt(land_ok)
+    sy, sx = site
+    dsite = np.hypot(yy - sy, xx - sx)
+    cand = (dsite <= 2.5) & (inland >= 2.5)
+    if not cand.any(): cand = (dsite <= 2.5) & (inland >= inland[dsite <= 2.5].max())
+    cy, cx = np.unravel_index(np.argmin(np.where(cand, dsite, 99)), mt.shape)
+    d = np.hypot(yy - cy, xx - cx); ang = np.arctan2(yy - cy, xx - cx)
+    clear = d <= clear_r
+    # the scenario script spawns the starting citizens south-east of the city (+x, +y): keep that side open
+    clear |= (yy > cy) & (xx > cx) & (d <= clear_r + 1.2)
+    removed = [r for r in recs if (mask_from_recs(mt.shape, [r]) & clear).any()]
+    recs[:] = [r for r in recs if r not in removed]
+    mt[:] = mask_from_recs(mt.shape, recs)
+    forest &= ~clear
+    free = land_ok & ~mt & ~ndimage.binary_dilation(clear)
+    # wood: unless a real forest is already close, grow one where the ring has the most open land
+    wood_ang = None
+    near_f = forest & (d <= wood_r[1])
+    if near_f.sum() >= 5:
+        wood_ang = float(np.arctan2((yy[near_f] - cy).mean(), (xx[near_f] - cx).mean()))
+    else:
+        ring = free & (d >= wood_r[0]) & (d <= wood_r[1]) & ~forest
+        room = ndimage.uniform_filter(free.astype(float), 3)
+        if ring.any():
+            wy, wx = np.unravel_index(np.argmax(np.where(ring, room + rng.uniform(0, 0.05, ring.shape), -1)), ring.shape)
+            g = blob(wy, wx, 7, free & ~forest & (d >= clear_r + 0.8), rng)
+            if g is not None:
+                forest |= g; wood_ang = float(np.arctan2(wy - cy, wx - cx))
+    # metal: a rock outcrop on a side away from the wood, unless a mountain is already in reach
+    if not (mt & (d <= metal_r[1])).any():
+        okm = land_ok & ~mt & ~clear & ~forest
+        best = None
+        for tid, r1 in ((ROCK_TID, metal_r[1]), (ROCK_TID, metal_r[1] + 1.5)):
+            fp = TEMPLATES[tid]
+            for py, px in np.argwhere((d >= metal_r[0]) & (d <= r1)):
+                hit = _fits(fp, py, px, okm)
+                if hit is None: continue
+                a = float(np.arctan2(py - cy, px - cx))
+                away = 1.0 if wood_ang is None else abs(math.remainder(a - wood_ang, 2 * math.pi)) / math.pi
+                sc = away + 0.3 * score[hit].mean() - 0.3 * d[py, px] + rng.uniform(0, 0.05)
+                if best is None or sc > best[0]: best = (sc, tid, py, px, hit)
+            if best: break
+        if best:
+            _, tid, py, px, (ys, xs) = best
+            _place(mt, recs, tid, py, px, ys, xs)
+        else:
+            # no room for a new rock (narrow islands like Crete): keep the real mountains instead
+            keep = [r for r in removed if not mask_from_recs(mt.shape, [r])[cy, cx]]
+            recs.extend(keep); mt[:] = mask_from_recs(mt.shape, recs)
+    return int(cy), int(cx)
+
+def wood_near_sites(forest, allowed, sites, rng, rmax=3.2, n=5):
+    """Every big town gets at least a small wood within ~13 tiles."""
+    ch, cw = forest.shape
+    yy, xx = np.mgrid[0:ch, 0:cw]
+    for sy, sx in sites:
+        d = np.hypot(yy - sy, xx - sx)
+        if (forest & (d <= rmax)).sum() >= 4: continue
+        ring = allowed & ~forest & (d >= 2.0) & (d <= rmax)
+        if not ring.any(): continue
+        wy, wx = np.argwhere(ring)[int(rng.integers(ring.sum()))]
+        g = blob(wy, wx, n, allowed & ~forest & (d >= 1.6), rng)
+        if g is not None: forest |= g
+    return forest
 
 # (source file, exact Natural Earth name) -- one source per river to avoid doubled lines
 RIVERS = {
-    'ne_10m_rivers_europe.geojson': {'Maritsa', 'Mesta', 'Acheloos', 'Aoos', 'Sakarya',
-                                     'Yesilirmak', 'Gediz', 'Seyhan', 'Coruh'},
-    'ne_10m_rivers_lake_centerlines.geojson': {'Haliacmon', 'Drin', 'Morava', 'Ceyhan', 'Euphrates', 'Firat',
-                                               'Al Furat', 'Tigris', 'Dicle',
-                                               'Kiz?lirmak', 'Byk Menderes', 'Strymnas'},
+    'ne_10m_rivers_europe.geojson': {'Maritsa', 'Sakarya', 'Gediz'},
+    'ne_10m_rivers_lake_centerlines.geojson': {'Haliacmon', 'Kiz?lirmak', 'Byk Menderes', 'Strymnas', 'Danube'},
 }
 
 def ascii_name(s):
@@ -119,8 +220,6 @@ def ascii_name(s):
 HAND_RIVERS = {
     'Axios': [(21.10, 42.02), (21.43, 42.00), (21.62, 41.86), (21.78, 41.72), (22.00, 41.55), (22.24, 41.41),
               (22.52, 41.15), (22.55, 40.99), (22.65, 40.78), (22.75, 40.58)],
-    'Pineios': [(21.30, 39.85), (21.63, 39.70), (21.77, 39.55), (22.10, 39.55), (22.42, 39.64), (22.60, 39.87),
-                (22.74, 39.93)],
 }
 
 def load_rivers(grid):

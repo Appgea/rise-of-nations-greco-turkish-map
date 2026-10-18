@@ -78,6 +78,13 @@ RARE = [
     (36.30, 43.30, 'Relics'),      # Nineveh
     (41.80, 42.80, 'Furs'),        # Caucasus
     (34.90, 36.00, 'Dye'),         # Phoenician coast
+    (44.08, 22.10, 'Copper'),      # Bor
+    (44.42, 21.94, 'Copper'),      # Majdanpek
+    (45.23, 25.94, 'Salt'),        # Slanic Prahova
+    (45.05, 26.35, 'Wine'),        # Dealu Mare
+    (44.60, 20.20, 'Horses'),      # Sumadija
+    (45.30, 33.80, 'Salt'),        # Crimean salt lakes
+    (44.70, 34.00, 'Wine'),        # Crimea (Massandra)
 ]
 
 # oil fields (each spawns a small cluster)
@@ -87,6 +94,8 @@ OIL = [
     (37.65, 21.25, 1),   # Katakolo (offshore)
     (39.60, 20.40, 1),   # Epirus seeps
     (43.40, 24.40, 1),   # Dolni Dabnik
+    (44.95, 25.95, 3),   # Ploiesti
+    (44.75, 24.95, 1),   # Arges
     (37.90, 41.10, 2),   # Batman
     (37.80, 38.40, 1),   # Adiyaman
     (41.40, 27.30, 1),   # Hamitabat (Thrace)
@@ -115,4 +124,8 @@ RUINS = [
     (38.49, 28.04),  # Sardis
     (36.20, 36.16),  # Antioch
     (42.15, 24.75),  # Philippopolis theatre
+    (44.74, 21.21),  # Viminacium
+    (44.55, 28.77),  # Histria
+    (45.62, 23.31),  # Sarmizegetusa
+    (44.61, 33.49),  # Chersonesos
 ]

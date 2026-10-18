@@ -59,7 +59,7 @@ Older scenarios use header `0x67` (300 bytes).
 | 0xdc | is_human | **4 = human, 0 = computer. Multiplayer needs at least 2 human slots** |
 | 0xe0 | handicap | |
 | 0xe4 | team_color | u8 |
-| 0xe8 | difficulty | |
+| 0xe8 | difficulty | for a computer player: 0 Easiest, 1 Easy, 2 Moderate, 3 Tough, 4 Tougher, 5 Toughest |
 
 `FILE_LEADER_*` bits:
 
@@ -85,10 +85,10 @@ The map is W×H tiles, with "coarse" cells of 4×4 tiles.
 | Chunk | Content |
 |---|---|
 | `0x51` | map style string, e.g. `Dirty` |
-| `0x58` / `0x10` | 4 bytes per coarse cell (byte 2 non-zero = not buildable) |
+| `0x58` / `0x10` | 4 bytes per coarse cell: b0 feature flags, b1 0, b2 class (0 land, 1 coast, 2 open water; non-zero = not buildable), b3 base texture 0-3 (see [Textures](#textures)) |
 | `0x44` / `0x12` | u16 per tile: `0x10` water, `0x20` coastal water, `0x02` river |
 | `0x59` | (H+1)×(W+1) float32 vertex heights |
-| `0x5b` | engine cache, **must be zeros**; a copy of `0x63` crashes in `CoordInfo::add_geometry` |
+| `0x5b` | the `0x63` values again, in the renderer's diagonal order: diagonals from the (n-1, n-1) corner, the last cell left out (n²-1 values; verified on every stock map). A plain row-order copy crashes in `CoordInfo::add_geometry`; zeros load too |
 | `0x63` / `0x65` | u16 per coarse cell: `0x2` mountain, `0x100` forest, `0x11` river, `0x20` land near shore, `0x308d`/`0x3089`/`0x3009` coast and water classes |
 | `0x68` | zeros |
 | `0x45` | mountain stamps: `(cy*256 + cx, template_id, n_cells)` with 16 fixed templates (`generator/tools/mtn_templates.json`) |
@@ -100,12 +100,26 @@ The map is W×H tiles, with "coarse" cells of 4×4 tiles.
 - **Positions are world units of ¾ tile × 256, i.e. `tile × 192`.** The same unit applies to the header start
   positions. Using `tile × 256` misplaces everything and crashes `Good::init` on large maps.
 
+## Textures
+The `0x58` byte 3 base textures of the "Dirty" style (0 grass, 1 grass-dirt, 2 dirt-grass, 3 dirt) form a **cycle**
+0-1-2-3-0. In every stock map:
+- no two touching cells (8-neighbours) are opposite on the cycle (0/2 or 1/3), so a 2×2 block never holds more than
+  2 textures;
+- water and coast cells are 0, and the land ring touching the coast is 3, which blends into the beach sand.
+
+Out-of-range values crash `TileSet::convert_land_tex_to_linear`. Grass right against the coast band renders as
+hard-edged, cell-shaped sand blocks. `legal_textures` in `generator/tools/terrain.py` builds a field whose
+neighbours differ by less than one step, so the rule holds by construction.
+
+Stock shores also slope just under the waterline over about 3 tiles (vertex heights around −30, −11, +1, +12 at 1-4
+tiles from the water), which makes the smooth sand beach.
+
 ## Engine limits
-- **Maps must be square.** A rectangle crashes in `TileSet::convert_land_tex_to_linear`, so pad with sea.
+- **Maps must be square.** A rectangle crashes in `TileSet::convert_land_tex_to_linear`.
 - **512×512 works; 640×640 crashes** in `Terrain::init`.
 - **Slopes must be gentle.** Steep vertex heights make "must build on land" errors everywhere.
-- **Coast cells are unbuildable:** cells with the coast class in `0x63` or beach bits refuse buildings. Keep the coast
-  class off cells that are mostly land.
+- **Coast cells are unbuildable:** every cell holding a water tile is class 1 (coast), as in the stock maps.
+  Mixing coast and land classes along a shore draws a checkerboard of sand and grass diamonds.
 - A Small City needs about 7×7 tiles of free, flat land.
 
 ## Scenario scripts (`.bhs`)

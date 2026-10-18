@@ -4,9 +4,11 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
-LON0, LON1, LAT0, LAT1 = 19.0, 40.0, 34.3, 43.7
-# bbox of the downloaded Blue Marble image (web mercator), which covers the original wider extent
-IMG_LON0, IMG_LON1, IMG_LAT0, IMG_LAT1 = 19.0, 45.0, 34.3, 43.7
+LON0, LON1, LAT0 = 19.0, 34.7, 34.3
+# north edge chosen so the region is square in Mercator (RoN maps must be square)
+LAT1 = math.degrees(math.atan(math.sinh(math.log(math.tan(math.pi / 4 + math.radians(LAT0) / 2)) + math.radians(LON1 - LON0))))
+# bbox of the downloaded Blue Marble image (web mercator); fetch_data.py downloads exactly this
+IMG_LON0, IMG_LON1, IMG_LAT0, IMG_LAT1 = LON0, LON1, LAT0, LAT1
 
 def merc_y(lat):
     return math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))
@@ -62,8 +64,8 @@ def raster_polys(grid, files, ss=8, filt=None):
 def land_fraction(grid):
     land = raster_polys(grid, ['ne_10m_land.geojson'])
     isl = raster_polys(grid, ['ne_10m_minor_islands.geojson'])
-    lakes = raster_polys(grid, ['ne_10m_lakes.geojson'])
-    return np.clip(np.maximum(land, isl) - lakes, 0, 1), lakes
+    # lakes are left out on purpose: inland water only gets in the way of building
+    return np.maximum(land, isl), None
 
 def elevation(grid, z=7):
     """Elevation (m) at the (H+1)x(W+1) tile vertices, bilinear from terrarium tiles (web mercator)."""

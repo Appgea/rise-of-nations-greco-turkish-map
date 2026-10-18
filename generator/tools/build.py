@@ -14,13 +14,18 @@ RES_RECORD_SRC = GAME + '/scenario/Custom/italy_mp/italy_mp.scx'
 GOODY_RECORD_SRC = GAME + '/scenario/Custom/skirmish/skirmish.sce'
 NATION = {'greeks': 5, 'turks': 8}
 LAND_THR = 0.35     # tile is land if >= 35% land (slightly widens coasts)
-WEST_MTN = 0.92     # mountain score multiplier west of 27E
+WEST_MTN = 0.82     # mountain score multiplier west of 27E (Greece and the Balkans: more room to build)
 LEADERS = ('Eleftherios Venizelos', 'Mustafa Kemal Atatürk')
 # peaks that should always carry a mountain/rock if it fits (lat, lon)
 PEAKS = [(35.30, 24.00), (35.23, 24.77), (34.93, 32.86), (40.08, 22.36), (38.53, 22.62), (36.95, 22.35),
          (40.07, 29.22), (38.53, 35.45), (38.13, 34.17), (39.70, 44.30), (39.70, 26.85), (40.17, 24.33)]
 
 def leaf(cid, data): return Chunk(cid, 0, data)
+
+def diag_order(n):
+    """Cell order of chunk 0x5b: diagonals from the (n-1, n-1) corner, the last cell left out."""
+    Y, X = np.divmod(np.arange(n * n), n)
+    return np.lexsort((n - 1 - Y, (n - 1 - X) + (n - 1 - Y)))[:-1]
 def box(cid, kids): return Chunk(cid, len(kids), children=kids)
 def u32s(*v): return struct.pack(f'<{len(v)}I', *v)
 
@@ -69,13 +74,25 @@ def compute_terrain(W, H):
     gc = green.reshape(ch, 4, cw, 4).mean((1, 3)); bc = bright.reshape(ch, 4, cw, 4).mean((1, 3))
     fidx = gc * 4 + (90 - bc) / 120
     fallow = cl & ~mt & ~rcell & ~keep_clear & ~ndimage.binary_dilation(mt, np.ones((3, 3), bool))
-    forest = features.forests(fidx, fallow, real_frac=0.15, max_gap=5)
+    forest = features.forests(fidx, fallow, real_frac=0.11, max_gap=7)
+    rng = np.random.default_rng(11)
+    forest = features.wood_near_sites(forest, fallow, major_sites, rng)
+    # start cities and every big historic city get a kit: open ground for the city and its farms,
+    # a wood and a mine nearby (start cities first, so theirs are never cleared by a neighbour's)
+    land_ok = cl & ~rcell
+    kits = {}
+    starts = sorted({c for st in cities.STARTS.values() for c in st.values()})
+    for name in starts + sorted(set(site_names) & cities.MAJOR - set(starts)):
+        kits[name] = features.start_kit(mt, recs, forest, land_ok, score, sites[site_names.index(name)], rng,
+                                        clear_r=1.8 if name in starts else 1.4)
+    for name in starts:   # re-assert the start kits' clear disks
+        features.start_kit(mt, recs, forest, land_ok, score, sites[site_names.index(name)], rng)
     tex = terrain.textures(green, water)
     flags = flags.copy(); flags[river] |= terrain.RIVER
     heights = terrain.vertex_heights(water, elev, river, mt)
     c58, v63 = terrain.coarse_layers_full(flags, mt, forest, river, tex)
     return dict(g=g, W=W, H=H, water=water, flags=flags, heights=heights, mt=mt, recs=recs, forest=forest,
-                river=river, polys=polys, tex=tex, c58=c58, v63=v63, elev=elev)
+                river=river, polys=polys, tex=tex, c58=c58, v63=v63, elev=elev, kits=kits)
 
 def pad_square(T):
     """Fallback for engines that only take square maps: add open sea above and below."""
@@ -200,8 +217,9 @@ def map_chunk(old, T):
         elif c.cid == 0x59:
             kids.append(leaf(0x59, T['heights'].astype('<f4').tobytes()))
         elif c.cid == 0x5b:
-            # 0x5b is an engine cache with an unknown layout; a copy of 0x63 crashes the renderer, zeros are safe
-            kids.append(leaf(0x5b, bytes(2 * n - 2)))
+            # 0x5b = the 0x63 cells in the renderer's diagonal order (verified on every stock map). The engine
+            # blends beaches and coasts from it; left as zeros, coast cells render as hard-edged sand blocks.
+            kids.append(leaf(0x5b, T['v63'].ravel()[diag_order(T['v63'].shape[0])].astype('<u2').tobytes()))
         elif c.cid == 0x63:
             kids.append(box(0x63, [leaf(0x64, u32s(n)), leaf(0x65, T['v63'].astype('<u2').tobytes())]))
         elif c.cid == 0x68:
@@ -222,15 +240,19 @@ def map_chunk(old, T):
             kids.append(c)
     return box(0x02, kids)
 
-def set_players(root, nations, leaders):
+AI_DIFFICULTY = 2   # 0 Easiest, 1 Easy, 2 Moderate, 3 Tough, 4 Tougher, 5 Toughest
+
+def set_players(root, nations, leaders, ai=(False, False)):
     P = root.find(0x0b)
     assert len(P.children) == 2
-    for p, nat, lead in zip(P.children, nations, leaders):
+    for p, nat, lead, is_ai in zip(P.children, nations, leaders, ai):
         info = p.find(0x6b); d = bytearray(info.data)
         struct.pack_into('<i', d, 4, nat)
         # LeaderPropertiesChunk3 (rise.pdb): 0x08 leader_flags (template has conquest transport locks), 0xdc is_human (4 = human);
-        # both players human, or multiplayer refuses the scenario ("supports less than 2 human players")
-        struct.pack_into('<i', d, 0x08, 0); struct.pack_into('<i', d, 0xdc, 4)
+        # both players human, or multiplayer refuses the scenario ("supports less than 2 human players");
+        # 0xe8 difficulty applies to a computer player
+        struct.pack_into('<i', d, 0x08, 0); struct.pack_into('<i', d, 0xdc, 0 if is_ai else 4)
+        struct.pack_into('<i', d, 0xe8, AI_DIFFICULTY if is_ai else 0)
         nm = lead.encode('utf-16le') + b'\0\0'
         d[20:20 + len(nm)] = nm
         info.data = bytes(d)
@@ -311,7 +333,7 @@ def main():
     for variant, title in (('capitals', 'Greco-Turkish War - Capitals'), ('frontier', 'Greco-Turkish War - Frontier')):
         st = cities.STARTS[variant]
         def pos(trname):
-            s = next(s for s in slots if s[3] == trname); return good_start(T, s[0], s[1])
+            cy, cx = T['kits'][trname]; return good_start(T, cx * 4 + 2, cy * 4 + 2 + T.get('yoff', 0))
         starts = [pos(st['greeks']), pos(st['turks'])]
         root = ronscx.load(TEMPLATE)
         root.children = [map_chunk(c, T) if c.cid == 0x02 else c for c in root.children]
@@ -335,6 +357,16 @@ def main():
         preview(os.path.join(d, 'preview.png'), T, res, ruins, slots, starts)
         made.append((name, d))
         print('wrote', d)
+        # solo variant: the Turks are played by the computer (multiplayer needs both slots human)
+        set_players(root, (NATION['greeks'], NATION['turks']), LEADERS, ai=(False, True))
+        set_header(root, title + ' vs AI', starts)
+        ai_name = name + '_vsAI'; da = os.path.join(a.out, ai_name); os.makedirs(da, exist_ok=True)
+        ronscx.save(root, os.path.join(da, ai_name + '.scx'))
+        shutil.copyfile(os.path.join(da, ai_name + '.scx'), os.path.join(da, ai_name + '.sce'))
+        shutil.copyfile(os.path.join(d, name + '.bhs'), os.path.join(da, ai_name + '.bhs'))
+        shutil.copyfile(os.path.join(d, 'preview.png'), os.path.join(da, 'preview.png'))
+        made.append((ai_name, da))
+        print('wrote', da)
     if a.install:
         for name, d in made:
             dst = os.path.join(GAME, 'scenario', 'Custom', name)

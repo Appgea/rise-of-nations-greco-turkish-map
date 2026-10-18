@@ -8,43 +8,45 @@ scenario
 labels {
 }
 
-static int nslot = 276;
-static int slot_x[] = [115, 105, 112, 132, 95, 82, 84, 69, 59, 59, 96, 75, 67, 59, 93, 82,
-    84, 76, 66, 99, 83, 96, 68, 71, 82, 64, 45, 49, 43, 31, 22, 42,
-    36, 46, 96, 94, 83, 78, 74, 85, 59, 55, 68, 59, 108, 128, 111, 126,
-    132, 144, 156, 167, 183, 139, 159, 148, 109, 136, 184, 174, 195, 178, 184, 191,
-    195, 202, 179, 225, 200, 145, 145, 154, 156, 132, 157, 97, 122, 133, 149, 164,
-    173, 350, 349, 364, 357, 342, 327, 341, 375, 20, 11, 12, 16, 12, 14, 23,
-    26, 43, 28, 25, 35, 59, 57, 44, 62, 78, 66, 48, 89, 68, 85, 73,
-    48, 37, 81, 105, 140, 162, 160, 155, 139, 100, 130, 183, 178, 207, 212, 213,
-    90, 103, 115, 185, 176, 142, 156, 111, 137, 162, 139, 154, 193, 217, 111, 185,
-    183, 224, 71, 72, 71, 88, 57, 37, 53, 42, 31, 46, 35, 60, 6, 5,
-    2, 9, 18, 243, 184, 200, 207, 215, 204, 214, 226, 186, 173, 187, 181, 177,
-    168, 201, 219, 266, 278, 250, 261, 245, 256, 268, 296, 307, 217, 196, 187, 199,
-    189, 198, 178, 206, 216, 220, 203, 202, 216, 214, 206, 228, 226, 247, 259, 246,
-    254, 243, 268, 281, 281, 286, 303, 317, 337, 364, 381, 398, 410, 419, 418, 282,
-    338, 316, 329, 310, 303, 347, 367, 366, 382, 383, 402, 370, 385, 381, 356, 389,
-    439, 466, 303, 326, 334, 360, 360, 394, 412, 423, 410, 428, 446, 460, 473, 505,
-    499, 500, 471, 493, 501, 482, 470, 448, 437, 442, 505, 443, 430, 409, 433, 432,
-    412, 410, 488, 462];
-static int slot_y[] = [293, 282, 278, 291, 278, 276, 264, 280, 281, 273, 294, 284, 284, 302, 305, 307,
-    321, 322, 328, 332, 241, 250, 244, 250, 252, 239, 240, 256, 262, 245, 241, 266,
-    287, 299, 209, 198, 204, 213, 204, 221, 204, 213, 220, 227, 228, 221, 194, 192,
-    199, 193, 193, 202, 186, 204, 214, 233, 256, 264, 257, 281, 300, 304, 313, 318,
-    324, 326, 337, 340, 368, 297, 309, 309, 320, 331, 341, 349, 368, 372, 373, 383,
-    377, 378, 373, 380, 386, 393, 390, 377, 365, 186, 187, 162, 172, 214, 206, 207,
-    194, 209, 227, 233, 162, 165, 196, 193, 186, 173, 160, 164, 183, 174, 193, 183,
-    181, 180, 158, 141, 160, 150, 167, 176, 178, 164, 158, 149, 142, 148, 151, 143,
-    155, 184, 179, 159, 172, 143, 144, 153, 117, 129, 127, 136, 122, 124, 124, 123,
-    114, 118, 121, 131, 146, 126, 112, 127, 143, 158, 143, 135, 152, 149, 150, 167,
-    161, 119, 130, 197, 175, 173, 198, 192, 184, 179, 195, 202, 206, 216, 225, 231,
-    223, 222, 218, 205, 204, 208, 216, 223, 227, 225, 202, 206, 240, 242, 251, 257,
-    271, 279, 282, 273, 263, 277, 294, 307, 297, 313, 322, 316, 327, 334, 347, 299,
-    271, 258, 248, 236, 268, 326, 330, 337, 351, 342, 329, 323, 309, 335, 347, 300,
-    232, 240, 296, 302, 281, 317, 307, 281, 293, 273, 269, 256, 235, 229, 210, 212,
-    237, 249, 188, 173, 189, 185, 165, 164, 179, 188, 208, 219, 193, 198, 200, 197,
-    215, 237, 281, 271, 257, 318, 300, 321, 305, 331, 111, 347, 355, 368, 379, 391,
-    387, 400, 355, 337];
+static int nslot = 291;
+static int slot_x[] = [154, 141, 150, 177, 127, 110, 112, 92, 79, 79, 128, 100, 89, 80, 124, 110,
+    112, 101, 88, 132, 112, 128, 90, 95, 110, 86, 60, 65, 57, 41, 30, 56,
+    49, 62, 128, 126, 111, 104, 99, 114, 79, 74, 91, 79, 144, 171, 148, 168,
+    176, 192, 209, 224, 245, 186, 213, 198, 146, 181, 246, 233, 260, 238, 246, 256,
+    260, 270, 240, 301, 268, 194, 194, 206, 208, 177, 210, 130, 164, 178, 200, 220,
+    232, 468, 467, 487, 477, 458, 438, 456, 502, 27, 15, 17, 21, 16, 18, 31,
+    35, 58, 37, 33, 46, 79, 76, 59, 83, 104, 88, 64, 119, 91, 114, 98,
+    64, 50, 109, 141, 188, 217, 214, 208, 186, 134, 174, 245, 239, 276, 284, 285,
+    120, 137, 154, 247, 235, 189, 208, 149, 183, 216, 187, 206, 258, 291, 148, 247,
+    245, 299, 95, 96, 95, 117, 76, 49, 71, 57, 42, 61, 47, 81, 8, 7,
+    3, 12, 24, 325, 247, 268, 278, 287, 273, 286, 302, 249, 231, 250, 242, 236,
+    225, 269, 293, 356, 372, 335, 350, 328, 343, 358, 397, 411, 290, 262, 251, 267,
+    253, 265, 238, 275, 288, 295, 272, 270, 288, 286, 275, 305, 302, 330, 347, 329,
+    339, 325, 358, 376, 376, 382, 406, 424, 451, 487, 510, 377, 452, 423, 440, 415,
+    405, 464, 491, 490, 511, 494, 509, 476, 405, 437, 446, 482, 481, 232, 48, 314,
+    227, 127, 269, 207, 192, 138, 288, 138, 227, 157, 191, 229, 292, 295, 320, 272,
+    119, 139, 175, 255, 267, 215, 168, 73, 94, 273, 175, 206, 302, 312, 149, 127,
+    75, 27, 63, 63, 53, 45, 75, 29, 44, 55, 107, 20, 321, 335, 370, 474,
+    492, 469, 495];
+static int slot_y[] = [363, 349, 343, 362, 344, 341, 325, 346, 347, 337, 365, 352, 352, 376, 380, 383,
+    401, 402, 411, 416, 294, 306, 298, 306, 309, 291, 293, 314, 323, 300, 295, 328,
+    355, 371, 251, 236, 245, 256, 244, 267, 245, 256, 266, 275, 276, 268, 232, 229,
+    238, 230, 231, 242, 221, 245, 259, 284, 314, 325, 316, 347, 373, 379, 391, 397,
+    406, 408, 422, 427, 464, 369, 385, 385, 400, 415, 427, 438, 464, 469, 471, 484,
+    476, 477, 471, 479, 487, 497, 493, 476, 460, 221, 222, 189, 202, 259, 248, 249,
+    231, 252, 275, 284, 189, 192, 234, 231, 221, 204, 186, 192, 217, 204, 230, 217,
+    214, 213, 183, 161, 186, 173, 195, 207, 211, 191, 184, 171, 162, 170, 174, 163,
+    180, 218, 211, 185, 202, 164, 165, 177, 129, 144, 142, 154, 136, 139, 139, 137,
+    124, 130, 134, 148, 168, 141, 122, 142, 163, 183, 163, 153, 175, 172, 173, 195,
+    188, 132, 146, 235, 206, 204, 237, 229, 218, 211, 233, 242, 248, 261, 272, 280,
+    270, 269, 264, 246, 245, 250, 260, 270, 275, 273, 243, 247, 293, 296, 307, 316,
+    335, 345, 349, 337, 324, 342, 365, 382, 369, 391, 402, 395, 409, 419, 436, 372,
+    334, 317, 303, 288, 331, 408, 413, 422, 441, 429, 412, 372, 282, 293, 368, 376,
+    348, 396, 383, 347, 364, 315, 278, 253, 224, 203, 225, 219, 193, 83, 66, 95,
+    110, 103, 98, 120, 117, 112, 122, 130, 107, 88, 64, 60, 45, 37, 49, 94,
+    74, 55, 53, 50, 25, 27, 21, 22, 43, 77, 83, 104, 92, 111, 7, 16,
+    2, 45, 73, 102, 63, 40, 52, 91, 108, 116, 107, 59, 41, 37, 2, 76,
+    60, 48, 80];
 static String gr_name[] = ["Athina", "Thiva", "Chalkida", "Karystos", "Livadeia", "Amfissa", "Lamia", "Nafpaktos",
     "Mesolongi", "Agrinio", "Korinthos", "Aigio", "Patra", "Pyrgos", "Nafplio", "Tripoli",
     "Sparti", "Kalamata", "Methoni", "Monemvasia", "Larisa", "Volos", "Trikala", "Karditsa",
@@ -72,14 +74,16 @@ static String gr_name[] = ["Athina", "Thiva", "Chalkida", "Karystos", "Livadeia"
     "Fokaia", "Smyrni", "Krini", "Magnisia", "Thyateira", "Sardeis", "Efesos", "Miletos",
     "Tralleis", "Mylasa", "Alikarnassos", "Mobolla", "Fyskos", "Makri", "Antifellos", "Laodikeia",
     "Temenothyres", "Synaos", "Kotyaio", "Dorylaio", "Akroinos", "Attaleia", "Side", "Kalonoros",
-    "Anemourio", "Seleukeia", "Zefyrio", "Adana", "Sis", "Alexandretta", "Antiocheia", "Baris",
-    "Agkyra", "Gordion", "Ikonio", "Karallia", "Filomilio", "Laranta", "Kyvistra", "Koloneia",
-    "Nigdi", "Neapoli", "Kaisareia", "Mokissos", "Yozgat", "Hattousa", "Gangra", "Evchaita",
-    "Sevasteia", "Tefriki", "Irakleia Pontiki", "Amastris", "Saframpolis", "Kastamon", "Ionopolis", "Sinopi",
-    "Pafra", "Amisos", "Amaseia", "Evdokia", "Oinoi", "Kotyora", "Kerasounta", "Trapezounta",
-    "Argyroupoli", "Keltzini", "Melitini", "Charpete", "Dersim", "Ourfa", "Samosata", "Antep",
-    "Germanikeia", "Kilis", "Sotsi", "Chalepi", "Idlib", "Lattakia", "Epifaneia", "Emesa",
-    "Antarados", "Tripolis", "Kallinikos", "Ierapoli"];
+    "Anemourio", "Seleukeia", "Zefyrio", "Baris", "Agkyra", "Gordion", "Ikonio", "Karallia",
+    "Filomilio", "Laranta", "Kyvistra", "Koloneia", "Nigdi", "Mokissos", "Hattousa", "Gangra",
+    "Irakleia Pontiki", "Amastris", "Saframpolis", "Kastamon", "Ionopolis", "Voukouresti", "Veligradi", "Konstantza",
+    "Rousse", "Vidini", "Dristra", "Svistov", "Nikopoli", "Lom", "Dobritsi", "Montana",
+    "Giurgiu", "Kraiova", "Pitesti", "Ploiesti", "Vraila", "Galatsi", "Toultsea", "Kalarasi",
+    "Severin", "Targu Jiu", "Ramnic", "Buzau", "Focsani", "Brasov", "Sibiu", "Timisoara",
+    "Resita", "Slobozia", "Slatina", "Alexandreia", "Medgidia", "Kallatis", "Alba Ioulia", "Deva",
+    "Arad", "Neoplanta", "Smederevo", "Kragouevats", "Pantsevo", "Zrenjanin", "Versets", "Valjevo",
+    "Tsatsak", "Kraljevo", "Zaitsar", "Sirmio", "Ismail", "Kilia", "Tyras", "Chersonisos",
+    "Simferoupoli", "Kerkinitis", "Gialta"];
 static String tr_name[] = ["Atina", "Istefe", "Egriboz", "Kizilhisar", "Livadya", "Salona", "Izdin", "Inebahti",
     "Misolonk", "Vrahor", "Gördes", "Vostiça", "Ballibadra", "Pirgos", "Anabolu", "Trapoliçe",
     "Mezistre", "Kalamata", "Moton", "Menekse", "Yenisehir", "Golos", "Tirhala", "Kardiça",
@@ -107,14 +111,16 @@ static String tr_name[] = ["Atina", "Istefe", "Egriboz", "Kizilhisar", "Livadya"
     "Foça", "Izmir", "Çesme", "Manisa", "Akhisar", "Salihli", "Selçuk", "Balat",
     "Aydin", "Milas", "Bodrum", "Mugla", "Marmaris", "Fethiye", "Kas", "Denizli",
     "Usak", "Simav", "Kütahya", "Eskisehir", "Afyon", "Antalya", "Manavgat", "Alanya",
-    "Anamur", "Silifke", "Mersin", "Adana", "Kozan", "Iskenderun", "Antakya", "Isparta",
-    "Ankara", "Polatli", "Konya", "Beysehir", "Aksehir", "Karaman", "Konya Eregli", "Aksaray",
-    "Nigde", "Nevsehir", "Kayseri", "Kirsehir", "Yozgat", "Bogazkale", "Çankiri", "Çorum",
-    "Sivas", "Divrigi", "Karadeniz Eregli", "Amasra", "Safranbolu", "Kastamonu", "Inebolu", "Sinop",
-    "Bafra", "Samsun", "Amasya", "Tokat", "Ünye", "Ordu", "Giresun", "Trabzon",
-    "Gümüshane", "Erzincan", "Malatya", "Elazig", "Tunceli", "Sanliurfa", "Adiyaman", "Gaziantep",
-    "Maras", "Kilis", "Soçi", "Halep", "Idlib", "Lazkiye", "Hama", "Humus",
-    "Tartus", "Trablussam", "Rakka", "Menbiç"];
+    "Anamur", "Silifke", "Mersin", "Isparta", "Ankara", "Polatli", "Konya", "Beysehir",
+    "Aksehir", "Karaman", "Konya Eregli", "Aksaray", "Nigde", "Kirsehir", "Bogazkale", "Çankiri",
+    "Karadeniz Eregli", "Amasra", "Safranbolu", "Kastamonu", "Inebolu", "Bükres", "Belgrad", "Köstence",
+    "Rusçuk", "Vidin", "Silistre", "Zistovi", "Nigbolu", "Lom", "Hacioglu Pazarcik", "Kutlofça",
+    "Yergögü", "Krayova", "Pitesti", "Ploiesti", "Ibrail", "Kalas", "Tulça", "Kalaras",
+    "Severin", "Targu Jiu", "Ramnik", "Buzau", "Foksan", "Brasov", "Sibin", "Temesvar",
+    "Resita", "Slobozia", "Slatina", "Alexandria", "Mecidiye", "Mangalya", "Erdel Belgradi", "Deva",
+    "Arad", "Varadin", "Semendire", "Kraguyevaç", "Pançova", "Beçkerek", "Virsec", "Valyevo",
+    "Çaçak", "Kraliyevo", "Zayçar", "Mitroviçe", "Ismail", "Kili", "Akkerman", "Akyar",
+    "Akmescit", "Gözleve", "Yalta"];
 static int slot_used[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -132,7 +138,8 @@ static int slot_used[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0];
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0];
 static int slot_pull[] = [81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0,
     0, 0, 0, 0, 81, 81, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0,
     0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -146,11 +153,12 @@ static int slot_pull[] = [81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0,
     0, 0, 0, 81, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0,
     0, 0, 0, 81, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81,
-    0, 0, 0, 81, 0, 81, 0, 0, 0, 0, 81, 81, 0, 0, 81, 0,
-    81, 0, 81, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0,
-    81, 0, 0, 0, 0, 0, 0, 81, 0, 81, 0, 0, 0, 0, 0, 81,
-    0, 0, 81, 0, 0, 81, 0, 81, 0, 0, 0, 81, 0, 0, 0, 0,
-    0, 0, 0, 0];
+    0, 0, 0, 81, 0, 81, 0, 0, 0, 0, 81, 0, 81, 0, 81, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 81, 81,
+    81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    81, 0, 0];
 
 static int kmax = 128;
 static String k_name[] = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
@@ -175,7 +183,7 @@ static int k_slot[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 static int setup_done = 0;
-static int cap_slot[] = [-1, 0, 224];
+static int cap_slot[] = [-1, 0, 220];
 static int cap_done[] = [0, 0, 0];
 
 int p;
@@ -208,10 +216,10 @@ run_once {
   if (off < 1) {
     off = 1;
   }
-  x1 = 116 * wx / 512;
-  y1 = 290 * wx / 512;
-  x2 = 336 * wx / 512;
-  y2 = 232 * wx / 512;
+  x1 = 154 * wx / 512;
+  y1 = 354 * wx / 512;
+  x2 = 450 * wx / 512;
+  y2 = 282 * wx / 512;
 
   create_building_near(1, x1, y1, "Small City", 1 * wx / 512);
   if (num_cities(1) == 0) {
