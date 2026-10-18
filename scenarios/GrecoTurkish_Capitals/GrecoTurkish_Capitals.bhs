@@ -1,0 +1,353 @@
+// Greco-Turkish War - Capitals
+// Generated map script: starting cities, and every city takes the name of the nearest real place.
+// Greek player (1) gets Greek names, Turkish player (2) gets Turkish names; captured cities are renamed.
+
+scenario
+{
+
+labels {
+}
+
+static int nslot = 276;
+static int slot_x[] = [115, 105, 112, 132, 95, 82, 84, 69, 59, 59, 96, 75, 67, 59, 93, 82,
+    84, 76, 66, 99, 83, 96, 68, 71, 82, 64, 45, 49, 43, 31, 22, 42,
+    36, 46, 96, 94, 83, 78, 74, 85, 59, 55, 68, 59, 108, 128, 111, 126,
+    132, 144, 156, 167, 183, 139, 159, 148, 109, 136, 184, 174, 195, 178, 184, 191,
+    195, 202, 179, 225, 200, 145, 145, 154, 156, 132, 157, 97, 122, 133, 149, 164,
+    173, 350, 349, 364, 357, 342, 327, 341, 375, 20, 11, 12, 16, 12, 14, 23,
+    26, 43, 28, 25, 35, 59, 57, 44, 62, 78, 66, 48, 89, 68, 85, 73,
+    48, 37, 81, 105, 140, 162, 160, 155, 139, 100, 130, 183, 178, 207, 212, 213,
+    90, 103, 115, 185, 176, 142, 156, 111, 137, 162, 139, 154, 193, 217, 111, 185,
+    183, 224, 71, 72, 71, 88, 57, 37, 53, 42, 31, 46, 35, 60, 6, 5,
+    2, 9, 18, 243, 184, 200, 207, 215, 204, 214, 226, 186, 173, 187, 181, 177,
+    168, 201, 219, 266, 278, 250, 261, 245, 256, 268, 296, 307, 217, 196, 187, 199,
+    189, 198, 178, 206, 216, 220, 203, 202, 216, 214, 206, 228, 226, 247, 259, 246,
+    254, 243, 268, 281, 281, 286, 303, 317, 337, 364, 381, 398, 410, 419, 418, 282,
+    338, 316, 329, 310, 303, 347, 367, 366, 382, 383, 402, 370, 385, 381, 356, 389,
+    439, 466, 303, 326, 334, 360, 360, 394, 412, 423, 410, 428, 446, 460, 473, 505,
+    499, 500, 471, 493, 501, 482, 470, 448, 437, 442, 505, 443, 430, 409, 433, 432,
+    412, 410, 488, 462];
+static int slot_y[] = [293, 282, 278, 291, 278, 276, 264, 280, 281, 273, 294, 284, 284, 302, 305, 307,
+    321, 322, 328, 332, 241, 250, 244, 250, 252, 239, 240, 256, 262, 245, 241, 266,
+    287, 299, 209, 198, 204, 213, 204, 221, 204, 213, 220, 227, 228, 221, 194, 192,
+    199, 193, 193, 202, 186, 204, 214, 233, 256, 264, 257, 281, 300, 304, 313, 318,
+    324, 326, 337, 340, 368, 297, 309, 309, 320, 331, 341, 349, 368, 372, 373, 383,
+    377, 378, 373, 380, 386, 393, 390, 377, 365, 186, 187, 162, 172, 214, 206, 207,
+    194, 209, 227, 233, 162, 165, 196, 193, 186, 173, 160, 164, 183, 174, 193, 183,
+    181, 180, 158, 141, 160, 150, 167, 176, 178, 164, 158, 149, 142, 148, 151, 143,
+    155, 184, 179, 159, 172, 143, 144, 153, 117, 129, 127, 136, 122, 124, 124, 123,
+    114, 118, 121, 131, 146, 126, 112, 127, 143, 158, 143, 135, 152, 149, 150, 167,
+    161, 119, 130, 197, 175, 173, 198, 192, 184, 179, 195, 202, 206, 216, 225, 231,
+    223, 222, 218, 205, 204, 208, 216, 223, 227, 225, 202, 206, 240, 242, 251, 257,
+    271, 279, 282, 273, 263, 277, 294, 307, 297, 313, 322, 316, 327, 334, 347, 299,
+    271, 258, 248, 236, 268, 326, 330, 337, 351, 342, 329, 323, 309, 335, 347, 300,
+    232, 240, 296, 302, 281, 317, 307, 281, 293, 273, 269, 256, 235, 229, 210, 212,
+    237, 249, 188, 173, 189, 185, 165, 164, 179, 188, 208, 219, 193, 198, 200, 197,
+    215, 237, 281, 271, 257, 318, 300, 321, 305, 331, 111, 347, 355, 368, 379, 391,
+    387, 400, 355, 337];
+static String gr_name[] = ["Athina", "Thiva", "Chalkida", "Karystos", "Livadeia", "Amfissa", "Lamia", "Nafpaktos",
+    "Mesolongi", "Agrinio", "Korinthos", "Aigio", "Patra", "Pyrgos", "Nafplio", "Tripoli",
+    "Sparti", "Kalamata", "Methoni", "Monemvasia", "Larisa", "Volos", "Trikala", "Karditsa",
+    "Farsala", "Kalampaka", "Ioannina", "Arta", "Preveza", "Igoumenitsa", "Kerkyra", "Lefkada",
+    "Argostoli", "Zakynthos", "Thessaloniki", "Kilkis", "Giannitsa", "Veroia", "Edessa", "Katerini",
+    "Florina", "Kastoria", "Kozani", "Grevena", "Kassandreia", "Agion Oros", "Serres", "Drama",
+    "Kavala", "Xanthi", "Komotini", "Alexandroupoli", "Didymoteicho", "Thasos", "Samothraki", "Myrina",
+    "Skiathos", "Skyros", "Mytilini", "Chios", "Samos", "Ikaria", "Patmos", "Leros",
+    "Kalymnos", "Kos", "Astypalaia", "Rodos", "Karpathos", "Andros", "Ermoupoli", "Mykonos",
+    "Naxos", "Milos", "Thira", "Kythira", "Chania", "Rethymno", "Irakleio", "Ierapetra",
+    "Siteia", "Lefkosia", "Keryneia", "Ammochostos", "Larnaka", "Lemesos", "Pafos", "Morfou",
+    "Rizokarpaso", "Tirana", "Dyrrachio", "Skodra", "Lissos", "Avlona", "Apollonia", "Verati",
+    "Elvasan", "Korytsa", "Argyrokastro", "Agioi Saranta", "Koukesi", "Skopia", "Monastiri", "Achrida",
+    "Prilapo", "Stipi", "Koumanovo", "Tetovo", "Stromnitsa", "Velessa", "Gevgeli", "Kavadartsi",
+    "Kitsevo", "Divra", "Kriva Palanka", "Sofia", "Filippoupoli", "Stara Zagora", "Chaskovo", "Kardzali",
+    "Smolyan", "Ano Tzoumagia", "Pazartzik", "Diampoli", "Sliven", "Bourgas", "Sozopoli", "Mesimvria",
+    "Kiustendil", "Petritsi", "Nevrokopi", "Elchovo", "Svilengrad", "Karlovo", "Kazanlak", "Samokov",
+    "Pleven", "Tarnovo", "Lovets", "Gabrovo", "Soumla", "Odissos", "Vratsa", "Targovishte",
+    "Razgrad", "Dionysoupoli", "Naissos", "Leskovats", "Vrania", "Pirot", "Krousevats", "Novi Pazar",
+    "Pristina", "Prizrena", "Petsi", "Mitrovitsa", "Gjakova", "Gnjilane", "Podgoritsa", "Oulkini",
+    "Antivari", "Pljevlja", "Bijelo Polje", "Konstantinoupoli", "Adrianoupoli", "Saranta Ekklisies", "Raidestos", "Tzouroulos",
+    "Arkadioupoli", "Vizyi", "Selymvria", "Kesani", "Ainos", "Kallipoli", "Dardanellia", "Ilion",
+    "Imvros", "Pigai", "Panormos", "Nikomideia", "Adapazari", "Elenoupoli", "Nikaia", "Prousa",
+    "Angelokomi", "Velokomi", "Prousias", "Klaudioupoli", "Palaiokastro", "Adramyttio", "Kydonies", "Pergamos",
+    "Fokaia", "Smyrni", "Krini", "Magnisia", "Thyateira", "Sardeis", "Efesos", "Miletos",
+    "Tralleis", "Mylasa", "Alikarnassos", "Mobolla", "Fyskos", "Makri", "Antifellos", "Laodikeia",
+    "Temenothyres", "Synaos", "Kotyaio", "Dorylaio", "Akroinos", "Attaleia", "Side", "Kalonoros",
+    "Anemourio", "Seleukeia", "Zefyrio", "Adana", "Sis", "Alexandretta", "Antiocheia", "Baris",
+    "Agkyra", "Gordion", "Ikonio", "Karallia", "Filomilio", "Laranta", "Kyvistra", "Koloneia",
+    "Nigdi", "Neapoli", "Kaisareia", "Mokissos", "Yozgat", "Hattousa", "Gangra", "Evchaita",
+    "Sevasteia", "Tefriki", "Irakleia Pontiki", "Amastris", "Saframpolis", "Kastamon", "Ionopolis", "Sinopi",
+    "Pafra", "Amisos", "Amaseia", "Evdokia", "Oinoi", "Kotyora", "Kerasounta", "Trapezounta",
+    "Argyroupoli", "Keltzini", "Melitini", "Charpete", "Dersim", "Ourfa", "Samosata", "Antep",
+    "Germanikeia", "Kilis", "Sotsi", "Chalepi", "Idlib", "Lattakia", "Epifaneia", "Emesa",
+    "Antarados", "Tripolis", "Kallinikos", "Ierapoli"];
+static String tr_name[] = ["Atina", "Istefe", "Egriboz", "Kizilhisar", "Livadya", "Salona", "Izdin", "Inebahti",
+    "Misolonk", "Vrahor", "Gördes", "Vostiça", "Ballibadra", "Pirgos", "Anabolu", "Trapoliçe",
+    "Mezistre", "Kalamata", "Moton", "Menekse", "Yenisehir", "Golos", "Tirhala", "Kardiça",
+    "Çatalca", "Kalabak", "Yanya", "Narda", "Preveze", "Gümenice", "Korfu", "Ayamavra",
+    "Kefalonya", "Zanta", "Selanik", "Kukus", "Yenice", "Karaferye", "Vodina", "Katerin",
+    "Florina", "Kesriye", "Kozana", "Grebene", "Kesendire", "Aynaroz", "Siroz", "Drama",
+    "Kavala", "Iskeçe", "Gümülcine", "Dedeagaç", "Dimetoka", "Tasöz", "Semadirek", "Limni",
+    "Iskiyatos", "Iskiri", "Midilli", "Sakiz", "Sisam", "Ahikerya", "Batnoz", "Leros",
+    "Kelemez", "Istanköy", "Istanpolya", "Rodos", "Kerpe", "Andire", "Sira", "Mikonos",
+    "Naksa", "Degirmenlik", "Santorin", "Çuha", "Hanya", "Resmo", "Kandiye", "Yerepetra",
+    "Sitiye", "Lefkosa", "Girne", "Gazimagusa", "Tuzla", "Leymosun", "Baf", "Güzelyurt",
+    "Dipkarpaz", "Tiran", "Draç", "Iskodra", "Les", "Avlonya", "Fiyeri", "Berat",
+    "Ilbasan", "Görice", "Ergiri", "Ayasaranda", "Kükes", "Üsküp", "Manastir", "Ohri",
+    "Pirlepe", "Istip", "Kumanova", "Kalkandelen", "Ustrumca", "Köprülü", "Gevgili", "Kavadar",
+    "Kirçova", "Debre", "Egri Palanka", "Sofya", "Filibe", "Eski Zagra", "Hasköy", "Kircaali",
+    "Pasmakli", "Cuma-i Bala", "Tatar Pazarcik", "Yanbolu", "Islimye", "Burgaz", "Süzebolu", "Misivri",
+    "Köstendil", "Petriç", "Nevrekop", "Kizilagaç", "Mustafapasa", "Karlova", "Kazanlik", "Samakov",
+    "Plevne", "Tirnova", "Lofça", "Gabrova", "Sumnu", "Varna", "Vraça", "Eski Cuma",
+    "Hezargrad", "Balçik", "Nis", "Leskofça", "Ivranya", "Sehirköy", "Alacahisar", "Yeni Pazar",
+    "Pristine", "Prizren", "Ipek", "Mitroviça", "Yakova", "Gilan", "Bögürtlen", "Ülgün",
+    "Bar", "Taslica", "Akova", "Istanbul", "Edirne", "Kirklareli", "Tekirdag", "Çorlu",
+    "Lüleburgaz", "Vize", "Silivri", "Kesan", "Enez", "Gelibolu", "Çanakkale", "Truva",
+    "Gökçeada", "Biga", "Bandirma", "Izmit", "Adapazari", "Yalova", "Iznik", "Bursa",
+    "Inegöl", "Bilecik", "Düzce", "Bolu", "Balikesir", "Edremit", "Ayvalik", "Bergama",
+    "Foça", "Izmir", "Çesme", "Manisa", "Akhisar", "Salihli", "Selçuk", "Balat",
+    "Aydin", "Milas", "Bodrum", "Mugla", "Marmaris", "Fethiye", "Kas", "Denizli",
+    "Usak", "Simav", "Kütahya", "Eskisehir", "Afyon", "Antalya", "Manavgat", "Alanya",
+    "Anamur", "Silifke", "Mersin", "Adana", "Kozan", "Iskenderun", "Antakya", "Isparta",
+    "Ankara", "Polatli", "Konya", "Beysehir", "Aksehir", "Karaman", "Konya Eregli", "Aksaray",
+    "Nigde", "Nevsehir", "Kayseri", "Kirsehir", "Yozgat", "Bogazkale", "Çankiri", "Çorum",
+    "Sivas", "Divrigi", "Karadeniz Eregli", "Amasra", "Safranbolu", "Kastamonu", "Inebolu", "Sinop",
+    "Bafra", "Samsun", "Amasya", "Tokat", "Ünye", "Ordu", "Giresun", "Trabzon",
+    "Gümüshane", "Erzincan", "Malatya", "Elazig", "Tunceli", "Sanliurfa", "Adiyaman", "Gaziantep",
+    "Maras", "Kilis", "Soçi", "Halep", "Idlib", "Lazkiye", "Hama", "Humus",
+    "Tartus", "Trablussam", "Rakka", "Menbiç"];
+static int slot_used[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0];
+static int slot_pull[] = [81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0,
+    0, 0, 0, 0, 81, 81, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0,
+    0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 81, 0,
+    0, 81, 0, 0, 0, 0, 0, 0, 0, 81, 81, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 81, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 81, 81, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0,
+    0, 0, 81, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 81, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0,
+    0, 0, 0, 81, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81,
+    0, 0, 0, 81, 0, 81, 0, 0, 0, 0, 81, 81, 0, 0, 81, 0,
+    81, 0, 81, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0,
+    81, 0, 0, 0, 0, 0, 0, 81, 0, 81, 0, 0, 0, 0, 0, 81,
+    0, 0, 81, 0, 0, 81, 0, 81, 0, 0, 0, 81, 0, 0, 0, 0,
+    0, 0, 0, 0];
+
+static int kmax = 128;
+static String k_name[] = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
+static int k_owner[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+static int k_slot[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+static int setup_done = 0;
+static int cap_slot[] = [-1, 0, 224];
+static int cap_done[] = [0, 0, 0];
+
+int p;
+int c;
+int n;
+int i;
+int j;
+int best;
+int bestd;
+int d;
+int dx;
+int dy;
+int cid;
+int cx;
+int cy;
+int found;
+int freeslot;
+int wx;
+int off;
+int x1;
+int y1;
+int x2;
+int y2;
+String cname;
+String newname;
+
+run_once {
+  wx = world_x_size();
+  off = 6 * wx / 512;
+  if (off < 1) {
+    off = 1;
+  }
+  x1 = 116 * wx / 512;
+  y1 = 290 * wx / 512;
+  x2 = 336 * wx / 512;
+  y2 = 232 * wx / 512;
+
+  create_building_near(1, x1, y1, "Small City", 1 * wx / 512);
+  if (num_cities(1) == 0) {
+    create_building_near(1, x1, y1, "Small City", 5 * wx / 512);
+  }
+  if (num_cities(1) == 0) {
+    create_building_near(1, x1, y1, "Small City", 10 * wx / 512);
+  }
+  create_unit(1, x1 + off, y1 + off, "Citizen", 5);
+  create_unit(1, x1 + off, y1 + off, "Scout", 1);
+
+  create_building_near(2, x2, y2, "Small City", 1 * wx / 512);
+  if (num_cities(2) == 0) {
+    create_building_near(2, x2, y2, "Small City", 5 * wx / 512);
+  }
+  if (num_cities(2) == 0) {
+    create_building_near(2, x2, y2, "Small City", 10 * wx / 512);
+  }
+  create_unit(2, x2 + off, y2 + off, "Citizen", 5);
+  create_unit(2, x2 + off, y2 + off, "Scout", 1);
+
+  declare_war(1, 2);
+  declare_war(2, 1);
+
+  set_timer("names", 1);
+  set_timer("endcheck", 30);
+  setup_done = 1;
+
+  popup_dialog("Greco-Turkish War on a real map of the Aegean, Anatolia and the Balkans. Every city you found takes the real name of the nearest place, in your own language; captured cities are renamed by their new owner. Take all enemy cities to win.");
+}
+
+trigger NameCities(timer_expired("names"))
+{
+  wx = world_x_size();
+  for (p = 1; p < 3; p++) {
+    n = num_cities(p);
+    for (c = 0; c <= n; c++) {
+      cname = find_city_with_num(p, c);
+      if (!(cname == "")) {
+        found = -1;
+        for (j = 0; j < kmax; j++) {
+          if (k_owner[j] > 0) {
+            if (k_name[j] == cname) {
+              found = j;
+              break;
+            }
+          }
+        }
+        if (found == -1) {
+          cid = find_city_id(cname);
+          cx = object_position_x(p, cid) * 512 / wx;
+          cy = object_position_y(p, cid) * 512 / wx;
+          best = -1;
+          bestd = 999999999;
+          for (i = 0; i < nslot; i++) {
+            if (slot_used[i] == 0) {
+              dx = slot_x[i] - cx;
+              dy = slot_y[i] - cy;
+              d = dx * dx + dy * dy - slot_pull[i];
+              if (d < bestd) {
+                bestd = d;
+                best = i;
+              }
+            }
+          }
+          freeslot = -1;
+          for (j = 0; j < kmax; j++) {
+            if (k_owner[j] == 0) {
+              freeslot = j;
+              break;
+            }
+          }
+          if (cap_done[p] == 0) {
+            if (cap_slot[p] >= 0) {
+              best = cap_slot[p];
+            }
+            cap_done[p] = 1;
+          }
+          if (best >= 0 && freeslot >= 0) {
+            if (p == 1) {
+              newname = gr_name[best];
+            }
+            else {
+              newname = tr_name[best];
+            }
+            rename_city(p, cid, newname);
+            slot_used[best] = 1;
+            k_name[freeslot] = newname;
+            k_owner[freeslot] = p;
+            k_slot[freeslot] = best;
+          }
+        }
+        else if (k_owner[found] != p) {
+          cid = find_city_id(cname);
+          if (p == 1) {
+            newname = gr_name[k_slot[found]];
+          }
+          else {
+            newname = tr_name[k_slot[found]];
+          }
+          if (!(newname == cname)) {
+            rename_city(p, cid, newname);
+          }
+          k_name[found] = newname;
+          k_owner[found] = p;
+        }
+      }
+    }
+  }
+  for (j = 0; j < kmax; j++) {
+    if (k_owner[j] > 0) {
+      if (!city_exists(k_name[j])) {
+        slot_used[k_slot[j]] = 0;
+        k_owner[j] = 0;
+        k_name[j] = "";
+      }
+    }
+  }
+  set_timer("names", 2);
+  enable_trigger("NameCities");
+}
+
+trigger CheckEnd(timer_expired("endcheck"))
+{
+  if (num_cities(1) == 0) {
+    victory(2);
+    defeat(1);
+  }
+  else if (num_cities(2) == 0) {
+    victory(1);
+    defeat(2);
+  }
+  else {
+    set_timer("endcheck", 5);
+    enable_trigger("CheckEnd");
+  }
+}
+
+}

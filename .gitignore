@@ -1,0 +1,5 @@
+generator/data/
+generator/out/
+__pycache__/
+*.pyc
+*.zip

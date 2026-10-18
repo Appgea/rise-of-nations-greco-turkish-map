@@ -1,0 +1,17 @@
+Greco-Turkish War - Rise of Nations: Extended Edition map
+
+INSTALL
+Extract both folders into your game folder under scenario\Custom\r
+(Steam > Rise of Nations > Manage > Browse local files), so you get
+  scenario\Custom\GrecoTurkish_Capitals\GrecoTurkish_Capitals.scx
+  scenario\Custom\GrecoTurkish_Frontier\GrecoTurkish_Frontier.scx
+
+MULTIPLAYER
+Both players install the same files and update the game.
+Host: Multiplayer > create game > Game Rules: Scenario > pick a GrecoTurkish map.
+Slot 1 = Greeks, slot 2 = Turks.
+
+SOLO
+Solo Game > Load a Scenario. You control both nations (no AI).
+
+More: https://github.com/Appgea/rise-of-nations-greco-turkish-map

@@ -1,0 +1,5 @@
+# RoN reads .bhs scripts only with CRLF line endings: keep them byte-exact
+*.bhs -text
+*.scx binary
+*.sce binary
+INSTALL.txt text eol=crlf
